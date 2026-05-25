@@ -42,11 +42,13 @@
     --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
     --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
     --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+    --shadow-xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
     
     --radius-sm: 8px;
     --radius: 12px;
     --radius-lg: 16px;
     --radius-xl: 20px;
+    --radius-2xl: 24px;
     
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -571,7 +573,10 @@
     color: var(--text);
   }
 
-  .form-group { margin-bottom: 16px; }
+  .form-group { 
+    margin-bottom: 16px;
+    min-width: 0;
+  }
   
   .form-label {
     display: block;
@@ -585,6 +590,7 @@
   
   .input, .select {
     width: 100%;
+    max-width: 100%;
     padding: 14px 16px;
     border: 1.5px solid var(--border);
     border-radius: var(--radius);
@@ -593,6 +599,38 @@
     background: white;
     transition: var(--transition);
     color: var(--text);
+    min-width: 0;
+  }
+  
+  /* Ajustes específicos para inputs de data para não ultrapassar a tela */
+  .input[type="date"],
+  .input[type="month"],
+  .input[type="time"],
+  .input[type="datetime-local"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* Fallback para o ícone do date picker em WebKit */
+  .input[type="date"]::-webkit-calendar-picker-indicator,
+  .input[type="month"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    opacity: 0.6;
+  }
+  
+  .input[type="date"]::-webkit-calendar-picker-indicator:hover,
+  .input[type="month"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
   }
   
   .input:focus, .select:focus {
@@ -648,6 +686,7 @@
     height: 20px;
     accent-color: var(--primary);
     cursor: pointer;
+    flex-shrink: 0;
   }
   
   .checkbox-row span {
@@ -933,7 +972,6 @@
     box-shadow: 0 2px 8px rgb(37 99 235 / 0.3);
   }
 
-  /* NOVO: Card de backup/importação */
   .settings-card {
     background: var(--card);
     border-radius: var(--radius-lg);
@@ -974,7 +1012,6 @@
     gap: 10px;
   }
   
-  /* Stats de dados */
   .data-stats {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1006,7 +1043,6 @@
     letter-spacing: -0.02em;
   }
 
-  /* Toast notification */
   .toast {
     position: fixed;
     bottom: 100px;
@@ -1038,6 +1074,201 @@
   .toast.error { background: var(--danger); }
   .toast svg { width: 18px; height: 18px; flex-shrink: 0; }
 
+  .financing-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin: 12px 0;
+  }
+  
+  .financing-stat {
+    background: var(--bg-subtle);
+    border-radius: var(--radius-sm);
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .financing-stat-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+  }
+  
+  .financing-stat-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  
+  .financing-stat-value.green { color: var(--success); }
+  .financing-stat-value.orange { color: #b45309; }
+  .financing-stat-value.blue { color: var(--primary); }
+  .financing-stat-value.purple { color: var(--purple); }
+
+  .confirm-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 500;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  
+  .confirm-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .confirm-modal {
+    background: white;
+    border-radius: var(--radius-2xl);
+    padding: 32px 28px 24px;
+    max-width: 420px;
+    width: 100%;
+    box-shadow: var(--shadow-xl), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    transform: scale(0.9) translateY(20px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .confirm-backdrop.open .confirm-modal {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+  
+  .confirm-modal::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--primary-hover) 100%);
+  }
+  
+  .confirm-modal.danger::before {
+    background: linear-gradient(90deg, var(--danger) 0%, #dc2626 100%);
+  }
+  
+  .confirm-modal.warning::before {
+    background: linear-gradient(90deg, var(--warning) 0%, #d97706 100%);
+  }
+  
+  .confirm-modal.success::before {
+    background: linear-gradient(90deg, var(--success) 0%, #059669 100%);
+  }
+  
+  .confirm-icon-wrapper {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--primary-lighter);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    color: var(--primary);
+    box-shadow: 0 8px 24px -8px rgb(37 99 235 / 0.4);
+    position: relative;
+  }
+  
+  .confirm-icon-wrapper::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px dashed var(--primary-light);
+    animation: spin 20s linear infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  .confirm-modal.danger .confirm-icon-wrapper {
+    background: var(--danger-light);
+    color: var(--danger);
+    box-shadow: 0 8px 24px -8px rgb(239 68 68 / 0.4);
+  }
+  
+  .confirm-modal.danger .confirm-icon-wrapper::after {
+    border-color: #fecaca;
+  }
+  
+  .confirm-modal.warning .confirm-icon-wrapper {
+    background: var(--warning-light);
+    color: var(--warning);
+    box-shadow: 0 8px 24px -8px rgb(245 158 11 / 0.4);
+  }
+  
+  .confirm-modal.warning .confirm-icon-wrapper::after {
+    border-color: #fde68a;
+  }
+  
+  .confirm-modal.success .confirm-icon-wrapper {
+    background: var(--success-light);
+    color: var(--success);
+    box-shadow: 0 8px 24px -8px rgb(16 185 129 / 0.4);
+  }
+  
+  .confirm-modal.success .confirm-icon-wrapper::after {
+    border-color: #a7f3d0;
+  }
+  
+  .confirm-icon-wrapper svg {
+    width: 32px;
+    height: 32px;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .confirm-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    text-align: center;
+    margin-bottom: 10px;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+  
+  .confirm-message {
+    font-size: 14px;
+    color: var(--text-secondary);
+    text-align: center;
+    line-height: 1.6;
+    margin-bottom: 28px;
+    white-space: pre-line;
+  }
+  
+  .confirm-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  
+  .confirm-actions .btn {
+    padding: 13px 20px;
+    font-size: 14px;
+  }
+  
+  .confirm-actions.single {
+    grid-template-columns: 1fr;
+  }
+
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
@@ -1059,7 +1290,6 @@
 </header>
 
 <main>
-  <!-- HOME -->
   <section id="view-home" class="view active">
     <div class="card card-hero">
       <div class="label">
@@ -1098,7 +1328,6 @@
     <div class="list" id="home-recent"></div>
   </section>
 
-  <!-- RECEITAS -->
   <section id="view-receitas" class="view">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
       <h1 style="font-size:24px; font-weight:700; letter-spacing:-0.02em;">Receitas</h1>
@@ -1106,6 +1335,12 @@
         <i data-lucide="plus"></i>
       </button>
     </div>
+    
+    <div class="form-group" style="margin-bottom:20px;">
+      <label class="form-label">Período</label>
+      <input type="month" class="input" id="income-month-filter" onchange="App.renderIncomes()">
+    </div>
+    
     <label class="checkbox-row" style="margin-bottom:20px;">
       <input type="checkbox" id="filter-fixed-income" onchange="App.renderIncomes()">
       <span>Mostrar apenas fixas</span>
@@ -1113,7 +1348,6 @@
     <div class="list" id="incomes-list"></div>
   </section>
 
-  <!-- GASTOS -->
   <section id="view-gastos" class="view">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
       <h1 style="font-size:24px; font-weight:700; letter-spacing:-0.02em;">Gastos</h1>
@@ -1126,11 +1360,18 @@
         </button>
       </div>
     </div>
+    
+    <div class="form-group" style="margin-bottom:20px;">
+      <label class="form-label">Período</label>
+      <input type="month" class="input" id="expense-month-filter" onchange="App.renderExpenses()">
+    </div>
+    
+    <div id="expense-categories"></div>
+    
     <div class="tabs" id="expense-tabs"></div>
     <div class="list" id="expenses-list"></div>
   </section>
 
-  <!-- DÍVIDAS -->
   <section id="view-dividas" class="view">
     <h1 style="font-size:24px; font-weight:700; letter-spacing:-0.02em; margin-bottom:24px;">Dívidas</h1>
     
@@ -1161,7 +1402,6 @@
     </div>
   </section>
 
-  <!-- DASHBOARD -->
   <section id="view-dashboard" class="view">
     <h1 style="font-size:24px; font-weight:700; letter-spacing:-0.02em; margin-bottom:20px;">Dashboard</h1>
     
@@ -1214,7 +1454,6 @@
   </section>
 </main>
 
-<!-- BOTTOM NAV -->
 <nav class="bottom">
   <button class="nav-item active" data-view="home" onclick="App.switchView('home')">
     <i data-lucide="home"></i>
@@ -1238,27 +1477,33 @@
   </button>
 </nav>
 
-<!-- SHEET BACKDROP -->
 <div class="sheet-backdrop" id="sheet-backdrop" onclick="App.closeModal()"></div>
 
-<!-- MODAL SHEET -->
 <div class="sheet" id="sheet">
   <div class="sheet-handle"></div>
   <h2 id="sheet-title">Novo Lançamento</h2>
   <div id="sheet-content"></div>
 </div>
 
-<!-- INPUT FILE OCULTO PARA IMPORTAÇÃO -->
+<div class="confirm-backdrop" id="confirm-backdrop">
+  <div class="confirm-modal" id="confirm-modal">
+    <div class="confirm-icon-wrapper" id="confirm-icon-wrapper">
+      <i data-lucide="alert-triangle" id="confirm-icon"></i>
+    </div>
+    <div class="confirm-title" id="confirm-title">Confirmar ação</div>
+    <div class="confirm-message" id="confirm-message">Tem certeza que deseja continuar?</div>
+    <div class="confirm-actions" id="confirm-actions">
+      <button class="btn btn-ghost" id="confirm-cancel">Cancelar</button>
+      <button class="btn btn-primary" id="confirm-ok">Confirmar</button>
+    </div>
+  </div>
+</div>
+
 <input type="file" id="import-file-input" accept=".json,application/json" style="display:none;">
 
-<!-- TOAST NOTIFICATION -->
 <div class="toast" id="toast"></div>
 
 <script>
-/* ========================================
-   FINAPP - Vanilla JS com Clean Architecture
-   ======================================== */
-
 const Storage = {
   KEY: 'finapp_v4',
   get() {
@@ -1336,7 +1581,9 @@ const App = {
     categories: ['Alimentação', 'Transporte', 'Lazer', 'Moradia', 'Saúde', 'Educação', 'Assinaturas', 'Outros'],
     filterCategory: '',
     filterFixed: false,
-    modal: { type: null, editing: null }
+    modal: { type: null, editing: null },
+    incomeMonthFilter: Domain.currentMonth(),
+    expenseMonthFilter: Domain.currentMonth()
   },
 
   init() {
@@ -1350,18 +1597,38 @@ const App = {
         this.state.categories = saved.categories;
       }
     }
-    document.getElementById('dash-month').value = Domain.currentMonth();
     
-    // Configurar input de importação
+    this.migrateExpenses();
+    this.migrateFinancings();
+    this.migrateLoans();
+    
+    document.getElementById('dash-month').value = Domain.currentMonth();
+    document.getElementById('income-month-filter').value = Domain.currentMonth();
+    document.getElementById('expense-month-filter').value = Domain.currentMonth();
+    
     document.getElementById('import-file-input').addEventListener('change', (e) => {
       this.handleFileImport(e);
     });
     
-    this.render();
+    document.getElementById('confirm-cancel').addEventListener('click', () => {
+      if (this._confirmResolver) { this._confirmResolver(false); this._confirmResolver = null; }
+      this.closeConfirm();
+    });
     
-    if (window.lucide) {
-      lucide.createIcons();
-    }
+    document.getElementById('confirm-ok').addEventListener('click', () => {
+      if (this._confirmResolver) { this._confirmResolver(true); this._confirmResolver = null; }
+      this.closeConfirm();
+    });
+    
+    document.getElementById('confirm-backdrop').addEventListener('click', (e) => {
+      if (e.target.id === 'confirm-backdrop') {
+        if (this._confirmResolver) { this._confirmResolver(false); this._confirmResolver = null; }
+        this.closeConfirm();
+      }
+    });
+    
+    this.render();
+    if (window.lucide) lucide.createIcons();
   },
 
   save() {
@@ -1374,43 +1641,134 @@ const App = {
     });
   },
 
-  // ===== TOAST NOTIFICATION =====
+  migrateExpenses() {
+    const newExpenses = [];
+    let migrated = false;
+    const processedGroups = new Set();
+    
+    this.state.expenses.forEach(e => {
+      if (e.installments && e.installments.groupId) {
+        const groupId = e.installments.groupId;
+        if (!processedGroups.has(groupId)) {
+          processedGroups.add(groupId);
+          const groupItems = this.state.expenses.filter(x => x.installments?.groupId === groupId);
+          if (groupItems.length > 0) {
+            const first = groupItems[0];
+            const totalAmount = groupItems.reduce((s, i) => s + (Number(i.amount) || 0), 0);
+            const startDate = first.startDate || first.date;
+            const installmentsTotal = first.installments?.total || groupItems.length;
+            const installmentValue = Math.round((totalAmount / installmentsTotal) * 100) / 100;
+            newExpenses.push({
+              id: Domain.uid(), description: first.description.replace(/\s*\(\d+\/\d+\)\s*$/, ''),
+              totalAmount, installmentValue, category: first.category, startDate,
+              endDate: Domain.addMonths(startDate, installmentsTotal - 1), installmentsTotal,
+              isFixed: first.isFixed, installmentType: 'installment',
+              createdAt: first.createdAt || new Date().toISOString()
+            });
+            migrated = true;
+          }
+        }
+      } else if (!e.totalAmount && !e.installmentsTotal) {
+        newExpenses.push({ ...e, totalAmount: e.amount, installmentValue: e.amount, startDate: e.date, endDate: e.date, installmentsTotal: 1, installmentType: e.installmentType || 'cash' });
+      } else { newExpenses.push(e); }
+    });
+    if (migrated) { this.state.expenses = newExpenses; this.save(); }
+  },
+
+  migrateFinancings() {
+    let migrated = false;
+    this.state.financings = this.state.financings.map(f => {
+      if (f.installmentsTotal && f.installmentValue && f.startDate) return f;
+      const totalValue = Number(f.totalValue) || 0;
+      const monthlyPayment = Number(f.monthlyPayment) || 0;
+      const remainingMonths = Number(f.remainingMonths) || 0;
+      const paidValue = Number(f.paidValue) || 0;
+      const startDate = f.startDate || Domain.today();
+      let installmentsTotal = 0;
+      if (monthlyPayment > 0 && totalValue > 0) installmentsTotal = Math.ceil(totalValue / monthlyPayment);
+      else if (remainingMonths > 0 && monthlyPayment > 0) installmentsTotal = Math.floor(paidValue / monthlyPayment) + remainingMonths;
+      if (installmentsTotal > 0) {
+        migrated = true;
+        return { ...f, installmentsTotal, installmentValue: monthlyPayment || Math.round((totalValue / installmentsTotal) * 100) / 100, startDate };
+      }
+      return f;
+    });
+    if (migrated) this.save();
+  },
+
+  migrateLoans() {
+    let migrated = false;
+    this.state.loans = this.state.loans.map(l => {
+      if (l.installmentsTotal && l.installmentValue && l.startDate) {
+        const { interestRate, ...clean } = l;
+        return clean;
+      }
+      const amount = Number(l.amount) || 0;
+      const startDate = l.startDate || Domain.today();
+      const installmentsTotal = 12;
+      const installmentValue = Math.round((amount / installmentsTotal) * 100) / 100;
+      migrated = true;
+      const { interestRate, ...rest } = l;
+      return { ...rest, totalAmount: amount, installmentsTotal, installmentValue, startDate };
+    });
+    if (migrated) this.save();
+  },
+
   showToast(message, type = 'default') {
     const toast = document.getElementById('toast');
     toast.className = 'toast ' + type;
-    
-    let iconSvg = '';
-    if (type === 'success') iconSvg = '<i data-lucide="check-circle"></i>';
-    else if (type === 'error') iconSvg = '<i data-lucide="alert-circle"></i>';
-    else iconSvg = '<i data-lucide="info"></i>';
-    
+    let iconSvg = type === 'success' ? '<i data-lucide="check-circle"></i>' : type === 'error' ? '<i data-lucide="alert-circle"></i>' : '<i data-lucide="info"></i>';
     toast.innerHTML = iconSvg + '<span>' + Domain.escapeHtml(message) + '</span>';
-    
     if (window.lucide) lucide.createIcons();
-    
-    requestAnimationFrame(() => {
-      toast.classList.add('show');
-    });
-    
-    setTimeout(() => {
-      toast.classList.remove('show');
-    }, 3000);
+    requestAnimationFrame(() => toast.classList.add('show'));
+    setTimeout(() => toast.classList.remove('show'), 3000);
   },
+
+  showConfirm({ title, message, type = 'default', confirmText = 'Confirmar', cancelText = 'Cancelar', showCancel = true }) {
+    return new Promise((resolve) => {
+      const backdrop = document.getElementById('confirm-backdrop');
+      const modal = document.getElementById('confirm-modal');
+      const iconEl = document.getElementById('confirm-icon');
+      const titleEl = document.getElementById('confirm-title');
+      const messageEl = document.getElementById('confirm-message');
+      const actionsEl = document.getElementById('confirm-actions');
+      const okBtn = document.getElementById('confirm-ok');
+      const cancelBtn = document.getElementById('confirm-cancel');
+      
+      modal.className = 'confirm-modal';
+      if (type !== 'default') modal.classList.add(type);
+      
+      const icons = { default: 'alert-circle', danger: 'alert-triangle', warning: 'alert-triangle', success: 'check-circle' };
+      iconEl.setAttribute('data-lucide', icons[type] || 'alert-circle');
+      
+      titleEl.textContent = title || 'Confirmar ação';
+      messageEl.textContent = message || 'Tem certeza que deseja continuar?';
+      okBtn.textContent = confirmText;
+      cancelBtn.textContent = cancelText;
+      
+      okBtn.className = 'btn';
+      if (type === 'danger') okBtn.classList.add('btn-danger');
+      else if (type === 'success') okBtn.classList.add('btn-success');
+      else okBtn.classList.add('btn-primary');
+      
+      if (showCancel) { actionsEl.classList.remove('single'); cancelBtn.style.display = ''; }
+      else { actionsEl.classList.add('single'); cancelBtn.style.display = 'none'; }
+      
+      this._confirmResolver = resolve;
+      requestAnimationFrame(() => { backdrop.classList.add('open'); if (window.lucide) lucide.createIcons(); });
+    });
+  },
+
+  closeConfirm() { document.getElementById('confirm-backdrop').classList.remove('open'); },
 
   switchView(name) {
     this.state.view = name;
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     const target = document.getElementById('view-' + name);
     if (target) target.classList.add('active');
-    document.querySelectorAll('.nav-item').forEach(n => {
-      const nv = n.getAttribute('data-view');
-      n.classList.toggle('active', nv === name);
-    });
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.getAttribute('data-view') === name));
     this.render();
-    
-    if (window.lucide) {
-      lucide.createIcons();
-    }
+    if (window.lucide) lucide.createIcons();
   },
 
   render() {
@@ -1420,15 +1778,12 @@ const App = {
     this.renderFinancings();
     this.renderLoans();
     this.renderDashboard();
-    
-    if (window.lucide) {
-      lucide.createIcons();
-    }
+    if (window.lucide) lucide.createIcons();
   },
 
   computeTotals() {
-    const income = this.state.incomes.reduce((s, i) => s + (Number(i.amount) || 0), 0);
-    const expense = this.state.expenses.reduce((s, e) => s + (Number(e.amount) || 0), 0);
+    const income = this.state.incomes.reduce((s, i) => s + (Number(i.totalAmount || i.amount) || 0), 0);
+    const expense = this.state.expenses.reduce((s, e) => s + (Number(e.totalAmount || e.amount) || 0), 0);
     return { income, expense, balance: income - expense };
   },
 
@@ -1443,99 +1798,101 @@ const App = {
     const all = [
       ...this.state.incomes.map(i => ({ ...i, kind: 'income' })),
       ...this.state.expenses.map(e => ({ ...e, kind: 'expense' }))
-    ].sort((a, b) => (b.date || '').localeCompare(a.date || '')).slice(0, 5);
+    ].sort((a, b) => (b.startDate || b.date || '').localeCompare(a.startDate || a.date || '')).slice(0, 5);
 
     const container = document.getElementById('home-recent');
-    if (!all.length) {
-      container.innerHTML = '<div class="empty">Nenhum lançamento ainda.</div>';
-      return;
-    }
-    container.innerHTML = all.map(item => `
-      <div class="list-item">
-        <div style="width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:${item.kind === 'income' ? 'var(--success-light)' : 'var(--danger-light)'};">
-          <i data-lucide="${item.kind === 'income' ? 'wallet' : 'shopping-cart'}" style="width: 20px; height: 20px; color: ${item.kind === 'income' ? 'var(--success)' : 'var(--danger)'}"></i>
+    if (!all.length) { container.innerHTML = '<div class="empty">Nenhum lançamento ainda.</div>'; return; }
+    container.innerHTML = all.map(item => {
+      const amount = item.totalAmount || item.amount;
+      const date = item.startDate || item.date;
+      return `
+        <div class="list-item">
+          <div style="width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:${item.kind === 'income' ? 'var(--success-light)' : 'var(--danger-light)'};">
+            <i data-lucide="${item.kind === 'income' ? 'wallet' : 'shopping-cart'}" style="width: 20px; height: 20px; color: ${item.kind === 'income' ? 'var(--success)' : 'var(--danger)'}"></i>
+          </div>
+          <div class="info">
+            <div class="title">${Domain.escapeHtml(item.description)}</div>
+            <div class="subtitle">${Domain.escapeHtml(item.category || '')} • ${Domain.fmtDate(date)}</div>
+          </div>
+          <div class="amount ${item.kind === 'income' ? 'green' : 'red'}">
+            ${item.kind === 'income' ? '+' : '-'} ${Domain.fmt(amount)}
+          </div>
         </div>
-        <div class="info">
-          <div class="title">${Domain.escapeHtml(item.description)}</div>
-          <div class="subtitle">${Domain.escapeHtml(item.category || '')} • ${Domain.fmtDate(item.date)}</div>
-        </div>
-        <div class="amount ${item.kind === 'income' ? 'green' : 'red'}">
-          ${item.kind === 'income' ? '+' : '-'} ${Domain.fmt(item.amount)}
-        </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   },
+
+  getPaidInstallments(expense, referenceMonth) {
+    if (expense.installmentType !== 'installment' || !expense.installmentsTotal) return 1;
+    const refMonth = referenceMonth || Domain.currentMonth();
+    const monthsSinceStart = Domain.diffMonths(expense.startDate, refMonth) + 1;
+    return Math.min(Math.max(0, monthsSinceStart), expense.installmentsTotal);
+  },
+
+  getInstallmentValueForMonth(expense, monthFilter) {
+    if (expense.installmentType !== 'installment' || !expense.installmentsTotal) return (expense.date || '').startsWith(monthFilter) ? (expense.totalAmount || expense.amount) : 0;
+    for (let i = 0; i < expense.installmentsTotal; i++) if (Domain.addMonths(expense.startDate, i).startsWith(monthFilter)) return expense.installmentValue;
+    return 0;
+  },
+
+  expenseInMonth(expense, monthFilter) {
+    if (expense.installmentType !== 'installment' || !expense.installmentsTotal) return (expense.date || '').startsWith(monthFilter);
+    for (let i = 0; i < expense.installmentsTotal; i++) if (Domain.addMonths(expense.startDate, i).startsWith(monthFilter)) return true;
+    return false;
+  },
+
+  getDebtPaidInstallments(debt) {
+    if (!debt.installmentsTotal || !debt.startDate) return 0;
+    const monthsSinceStart = Domain.diffMonths(debt.startDate, Domain.currentMonth()) + 1;
+    return Math.min(Math.max(0, monthsSinceStart), debt.installmentsTotal);
+  },
+  getDebtRemainingInstallments(debt) { const paid = this.getDebtPaidInstallments(debt); return Math.max(0, (debt.installmentsTotal || 0) - paid); },
+  getDebtCurrentInstallment(debt) { const paid = this.getDebtPaidInstallments(debt); return paid >= debt.installmentsTotal ? debt.installmentsTotal : Math.min(paid + 1, debt.installmentsTotal || 0); },
 
   renderIncomes() {
-    const fixedOnly = document.getElementById('filter-fixed-income').checked;
-    let list = this.state.incomes;
-    if (fixedOnly) list = list.filter(i => i.isFixed);
-    list = [...list].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    const monthFilter = document.getElementById('income-month-filter').value || Domain.currentMonth();
+    this.state.incomeMonthFilter = monthFilter;
+    
+    let list = this.state.incomes.filter(i => {
+      if (i.installmentType === 'installment' && i.installmentsTotal) {
+        for (let j = 0; j < i.installmentsTotal; j++) {
+          const installmentDate = Domain.addMonths(i.startDate, j);
+          if (installmentDate.startsWith(monthFilter)) return true;
+        }
+        return false;
+      }
+      return (i.date || i.startDate || '').startsWith(monthFilter);
+    });
+    
+    if (document.getElementById('filter-fixed-income').checked) list = list.filter(i => i.isFixed);
+    list.sort((a, b) => (b.date || b.startDate || '').localeCompare(a.date || a.startDate || ''));
 
     const container = document.getElementById('incomes-list');
-    if (!list.length) {
-      container.innerHTML = '<div class="empty">Nenhuma receita cadastrada.</div>';
-      return;
-    }
-    container.innerHTML = list.map(i => `
-      <div class="list-item">
-        <div class="info">
-          <div class="title">
-            ${Domain.escapeHtml(i.description)}
-            ${i.isFixed ? ' <span class="badge blue"><i data-lucide="repeat" style="width: 10px; height: 10px;"></i> Fixa</span>' : ''}
-          </div>
-          <div class="subtitle">${Domain.fmtDate(i.date)}</div>
-        </div>
-        <div class="amount green">${Domain.fmt(i.amount)}</div>
-        <div class="list-actions">
-          <button class="icon-action" onclick="App.editIncome('${i.id}')" title="Editar">
-            <i data-lucide="pencil"></i>
-          </button>
-          <button class="icon-action danger" onclick="App.deleteIncome('${i.id}')" title="Excluir">
-            <i data-lucide="trash-2"></i>
-          </button>
-        </div>
-      </div>
-    `).join('');
-  },
-
-  renderExpenses() {
-    const cats = ['Todas', ...this.state.categories];
-    document.getElementById('expense-tabs').innerHTML = cats.map(c => {
-      const val = c === 'Todas' ? '' : c;
-      const active = this.state.filterCategory === val ? 'active' : '';
-      return `<button class="tab ${active}" onclick="App.setFilterCategory('${Domain.escapeHtml(val)}')">${Domain.escapeHtml(c)}</button>`;
-    }).join('');
-
-    let list = this.state.expenses;
-    if (this.state.filterCategory) {
-      list = list.filter(e => e.category === this.state.filterCategory);
-    }
-    list = [...list].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-
-    const container = document.getElementById('expenses-list');
-    if (!list.length) {
-      container.innerHTML = '<div class="empty">Nenhum gasto cadastrado.</div>';
-      return;
-    }
-    container.innerHTML = list.map(e => {
-      const sub = [
-        Domain.fmtDate(e.date),
-        e.isFixed ? 'Fixa' : '',
-        e.installments ? `${e.installments.current}/${e.installments.total}` : ''
-      ].filter(Boolean).join(' • ');
+    if (!list.length) { container.innerHTML = '<div class="empty">Nenhuma receita cadastrada para este período.</div>'; return; }
+    container.innerHTML = list.map(i => {
+      const amount = i.totalAmount || i.amount;
+      const date = i.startDate || i.date;
+      const paid = this.getPaidInstallments(i, monthFilter);
+      
+      const meta = i.installmentType === 'installment' && i.installmentsTotal > 1
+        ? `${paid}/${i.installmentsTotal} pagas • ${Domain.fmt(i.installmentValue || amount / i.installmentsTotal)}/parcela`
+        : 'À vista';
+      
       return `
         <div class="list-item">
           <div class="info">
-            <div class="title">${Domain.escapeHtml(e.description)}</div>
-            <div class="subtitle">${Domain.escapeHtml(sub)}</div>
+            <div class="title">
+              ${Domain.escapeHtml(i.description)}
+              ${i.isFixed ? ' <span class="badge blue"><i data-lucide="repeat" style="width: 10px; height: 10px;"></i> Fixa</span>' : ''}
+            </div>
+            <div class="subtitle">${Domain.fmtDate(date)} • ${meta}</div>
           </div>
-          <div class="amount red">${Domain.fmt(e.amount)}</div>
+          <div class="amount green">${Domain.fmt(amount)}</div>
           <div class="list-actions">
-            <button class="icon-action" onclick="App.editExpense('${e.id}')" title="Editar">
+            <button class="icon-action" onclick="App.editIncome('${i.id}')" title="Editar">
               <i data-lucide="pencil"></i>
             </button>
-            <button class="icon-action danger" onclick="App.deleteExpense('${e.id}')" title="Excluir">
+            <button class="icon-action danger" onclick="App.deleteIncome('${i.id}')" title="Excluir">
               <i data-lucide="trash-2"></i>
             </button>
           </div>
@@ -1544,44 +1901,116 @@ const App = {
     }).join('');
   },
 
-  setFilterCategory(cat) {
-    this.state.filterCategory = cat;
-    this.renderExpenses();
+  renderExpenseCategories() {
+    const monthFilter = document.getElementById('expense-month-filter').value || Domain.currentMonth();
+    this.state.expenseMonthFilter = monthFilter;
+    
+    const byCategory = {};
+    this.state.expenses.forEach(e => {
+      if (!this.expenseInMonth(e, monthFilter)) return;
+      const visibleAmount = this.getInstallmentValueForMonth(e, monthFilter);
+      if (visibleAmount <= 0) return;
+      const cat = e.category || 'Sem categoria';
+      if (!byCategory[cat]) byCategory[cat] = { total: 0, items: [] };
+      byCategory[cat].total += visibleAmount;
+      byCategory[cat].items.push({ ...e, visibleAmount });
+    });
+    
+    const container = document.getElementById('expense-categories');
+    const categories = Object.entries(byCategory).sort((a, b) => b[1].total - a[1].total);
+    if (!categories.length) { container.innerHTML = '<div class="empty">Nenhum gasto neste período.</div>'; return; }
+    
+    container.innerHTML = categories.map(([cat, data]) => {
+      const safeCat = Domain.escapeHtml(cat).replace(/'/g, "\\'");
+      const itemsHtml = data.items.map(e => {
+        const paid = this.getPaidInstallments(e, monthFilter);
+        const amount = e.visibleAmount || e.totalAmount || e.amount;
+        const meta = e.installmentType === 'installment' && e.installmentsTotal > 1 ? `${paid}/${e.installmentsTotal} pagas • ${Domain.fmt(e.installmentValue)}/parcela` : 'À vista';
+        return `
+          <div class="category-item-row">
+            <div style="flex:1; min-width:0;"><div class="item-desc">${Domain.escapeHtml(e.description)}</div><div class="item-meta">${Domain.escapeHtml(meta)}</div></div>
+            <div class="item-amount">${Domain.fmt(amount)}</div>
+            <div class="list-actions"><button class="icon-action" onclick="App.editExpense('${e.id}')"><i data-lucide="pencil"></i></button><button class="icon-action danger" onclick="App.deleteExpense('${e.id}')"><i data-lucide="trash-2"></i></button></div>
+          </div>
+        `;
+      }).join('');
+      
+      return `
+        <div class="category-block">
+          <div class="category-header">
+            <div class="category-header-left"><div class="cat-title">${Domain.escapeHtml(cat)}</div><div class="cat-count">${data.items.length} ${data.items.length === 1 ? 'item' : 'itens'}</div></div>
+            <div class="category-total">${Domain.fmt(data.total)}</div>
+            <button class="share-btn" onclick="App.openModal('expense', null, '${safeCat}')"><i data-lucide="plus"></i></button>
+          </div>
+          <div class="category-items">${itemsHtml}</div>
+        </div>
+      `;
+    }).join('');
   },
+
+  renderExpenses() {
+    this.renderExpenseCategories();
+    
+    const cats = ['Todas', ...this.state.categories];
+    document.getElementById('expense-tabs').innerHTML = cats.map(c => {
+      const val = c === 'Todas' ? '' : c;
+      return `<button class="tab ${this.state.filterCategory === val ? 'active' : ''}" onclick="App.setFilterCategory('${Domain.escapeHtml(val)}')">${Domain.escapeHtml(c)}</button>`;
+    }).join('');
+
+    const monthFilter = this.state.expenseMonthFilter;
+    let list = this.state.expenses.filter(e => this.expenseInMonth(e, monthFilter));
+    if (this.state.filterCategory) list = list.filter(e => e.category === this.state.filterCategory);
+    list.sort((a, b) => (b.startDate || b.date || '').localeCompare(a.startDate || a.date || ''));
+
+    const container = document.getElementById('expenses-list');
+    if (!list.length) { container.innerHTML = '<div class="empty">Nenhum gasto cadastrado para este período.</div>'; return; }
+    container.innerHTML = list.map(e => {
+      const paid = this.getPaidInstallments(e, monthFilter);
+      const amount = e.totalAmount || e.amount;
+      const metaParts = [];
+      if (e.installmentType === 'installment' && e.installmentsTotal > 1) { metaParts.push(`${paid}/${e.installmentsTotal} pagas`); metaParts.push(`${Domain.fmt(e.installmentValue)}/parcela`); }
+      else metaParts.push('À vista');
+      metaParts.push(Domain.fmtDate(e.startDate || e.date));
+      return `
+        <div class="list-item">
+          <div class="info"><div class="title">${Domain.escapeHtml(e.description)}</div><div class="subtitle">${metaParts.join(' • ')}</div></div>
+          <div class="amount red">${Domain.fmt(amount)}</div>
+          <div class="list-actions"><button class="icon-action" onclick="App.editExpense('${e.id}')"><i data-lucide="pencil"></i></button><button class="icon-action danger" onclick="App.deleteExpense('${e.id}')"><i data-lucide="trash-2"></i></button></div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  setFilterCategory(cat) { this.state.filterCategory = cat; this.renderExpenses(); },
 
   renderFinancings() {
     const container = document.getElementById('financings-list');
-    if (!this.state.financings.length) {
-      container.innerHTML = '<div class="empty">Nenhum financiamento.</div>';
-      return;
-    }
+    if (!this.state.financings.length) { container.innerHTML = '<div class="empty">Nenhum financiamento.</div>'; return; }
     container.innerHTML = this.state.financings.map(f => {
-      const total = Number(f.totalValue) || 0;
-      const paid = Number(f.paidValue) || 0;
-      const pct = total > 0 ? (paid / total * 100) : 0;
+      const totalValue = Number(f.totalValue) || 0;
+      const installmentValue = Number(f.installmentValue) || 0;
+      const installmentsTotal = Number(f.installmentsTotal) || 0;
+      const paid = this.getDebtPaidInstallments(f);
+      const remaining = this.getDebtRemainingInstallments(f);
+      const current = this.getDebtCurrentInstallment(f);
+      const totalPaid = paid * installmentValue;
+      const totalRemaining = remaining * installmentValue;
+      const pct = installmentsTotal > 0 ? (paid / installmentsTotal * 100) : 0;
       return `
         <div class="card">
-          <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:12px;">
-            <div style="font-weight:700; font-size:17px; letter-spacing:-0.01em;">${Domain.escapeHtml(f.name)}</div>
-            <span class="badge blue">
-              <i data-lucide="calendar" style="width: 10px; height: 10px;"></i>
-              ${Number(f.remainingMonths) || 0}x restantes
-            </span>
+          <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:12px;"><div style="font-weight:700; font-size:17px; letter-spacing:-0.01em;">${Domain.escapeHtml(f.name)}</div><span class="badge blue"><i data-lucide="calendar" style="width: 10px; height: 10px;"></i> Parcela ${current}/${installmentsTotal}</span></div>
+          <div class="financing-stats">
+            <div class="financing-stat"><div class="financing-stat-label">Pagas</div><div class="financing-stat-value green">${paid}</div></div>
+            <div class="financing-stat"><div class="financing-stat-label">Atual</div><div class="financing-stat-value blue">${current}</div></div>
+            <div class="financing-stat"><div class="financing-stat-label">Restam</div><div class="financing-stat-value orange">${remaining}</div></div>
           </div>
           <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-          <div style="display:flex; justify-content:space-between; font-size:14px; color:var(--text-secondary); margin-top:12px;">
-            <span>Parcela: <b style="color:var(--text)">${Domain.fmt(f.monthlyPayment)}</b></span>
-            <span>Restante: <b style="color:var(--text)">${Domain.fmt(total - paid)}</b></span>
-          </div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--text-secondary); margin-top:12px;"><span>Parcela: <b style="color:var(--text)">${Domain.fmt(installmentValue)}</b></span><span>Total: <b style="color:var(--text)">${Domain.fmt(totalValue)}</b></span></div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--text-secondary); margin-top:8px;"><span>Pago: <b style="color:var(--success)">${Domain.fmt(totalPaid)}</b></span><span>Restante: <b style="color:var(--danger)">${Domain.fmt(totalRemaining)}</b></span></div>
+          <div style="font-size:12px; color:var(--text-secondary); margin-top:8px;">Início: ${Domain.fmtDate(f.startDate)}</div>
           <div class="btn-row" style="margin-top:16px;">
-            <button class="btn btn-ghost btn-sm" onclick="App.editFinancing('${f.id}')">
-              <i data-lucide="pencil"></i>
-              Editar
-            </button>
-            <button class="btn btn-ghost btn-sm" style="color:var(--danger)" onclick="App.deleteFinancing('${f.id}')">
-              <i data-lucide="trash-2"></i>
-              Excluir
-            </button>
+            <button class="btn btn-ghost btn-sm" onclick="App.editFinancing('${f.id}')"><i data-lucide="pencil"></i> Editar</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--danger)" onclick="App.deleteFinancing('${f.id}')"><i data-lucide="trash-2"></i> Excluir</button>
           </div>
         </div>
       `;
@@ -1590,84 +2019,82 @@ const App = {
 
   renderLoans() {
     const container = document.getElementById('loans-list');
-    if (!this.state.loans.length) {
-      container.innerHTML = '<div class="empty">Nenhum empréstimo.</div>';
-      return;
-    }
-    container.innerHTML = this.state.loans.map(l => `
-      <div class="card" style="border-left:4px solid var(--purple);">
-        <div style="font-weight:700; font-size:17px; margin-bottom:6px; letter-spacing:-0.01em;">${Domain.escapeHtml(l.description)}</div>
-        <div style="font-size:13px; color:var(--text-secondary); margin-bottom:16px;">
-          Juros: ${Number(l.interestRate) || 0}% a.m • Início: ${Domain.fmtDate(l.startDate)}
+    if (!this.state.loans.length) { container.innerHTML = '<div class="empty">Nenhum empréstimo.</div>'; return; }
+    container.innerHTML = this.state.loans.map(l => {
+      const totalAmount = Number(l.totalAmount || l.amount) || 0;
+      const installmentValue = Number(l.installmentValue) || 0;
+      const installmentsTotal = Number(l.installmentsTotal) || 0;
+      const paid = this.getDebtPaidInstallments(l);
+      const remaining = this.getDebtRemainingInstallments(l);
+      const current = this.getDebtCurrentInstallment(l);
+      const totalPaid = paid * installmentValue;
+      const totalRemaining = remaining * installmentValue;
+      const pct = installmentsTotal > 0 ? (paid / installmentsTotal * 100) : 0;
+      return `
+        <div class="card" style="border-left:4px solid var(--purple);">
+          <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:12px;"><div style="font-weight:700; font-size:17px; letter-spacing:-0.01em;">${Domain.escapeHtml(l.description)}</div><span class="badge purple"><i data-lucide="calendar" style="width: 10px; height: 10px;"></i> Parcela ${current}/${installmentsTotal}</span></div>
+          <div class="financing-stats">
+            <div class="financing-stat"><div class="financing-stat-label">Pagas</div><div class="financing-stat-value green">${paid}</div></div>
+            <div class="financing-stat"><div class="financing-stat-label">Atual</div><div class="financing-stat-value purple">${current}</div></div>
+            <div class="financing-stat"><div class="financing-stat-label">Restam</div><div class="financing-stat-value orange">${remaining}</div></div>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%; background:linear-gradient(90deg, var(--purple) 0%, #7c3aed 100%);"></div></div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--text-secondary); margin-top:12px;"><span>Parcela: <b style="color:var(--text)">${Domain.fmt(installmentValue)}</b></span><span>Total: <b style="color:var(--text)">${Domain.fmt(totalAmount)}</b></span></div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--text-secondary); margin-top:8px;"><span>Pago: <b style="color:var(--success)">${Domain.fmt(totalPaid)}</b></span><span>Restante: <b style="color:var(--danger)">${Domain.fmt(totalRemaining)}</b></span></div>
+          <div style="font-size:12px; color:var(--text-secondary); margin-top:8px;">Início: ${Domain.fmtDate(l.startDate)}</div>
+          <div class="btn-row" style="margin-top:16px;">
+            <button class="btn btn-ghost btn-sm" onclick="App.editLoan('${l.id}')"><i data-lucide="pencil"></i> Editar</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--danger)" onclick="App.deleteLoan('${l.id}')"><i data-lucide="trash-2"></i> Excluir</button>
+          </div>
         </div>
-        <div style="background:var(--bg-subtle); padding:14px; border-radius:var(--radius); display:flex; justify-content:space-between; margin-bottom:16px;">
-          <span style="font-size:13px; color:var(--text-secondary);">Valor Total</span>
-          <span style="font-weight:700; font-size:16px;">${Domain.fmt(l.amount)}</span>
-        </div>
-        <div class="btn-row">
-          <button class="btn btn-ghost btn-sm" onclick="App.editLoan('${l.id}')">
-            <i data-lucide="pencil"></i>
-            Editar
-          </button>
-          <button class="btn btn-ghost btn-sm" style="color:var(--danger)" onclick="App.deleteLoan('${l.id}')">
-            <i data-lucide="trash-2"></i>
-            Excluir
-          </button>
-        </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   },
 
   getMonthlyDebts(ym) {
     const debts = [];
-
     this.state.financings.forEach(f => {
-      if (!f.startDate || Number(f.remainingMonths) <= 0) return;
+      if (!f.startDate || !f.installmentsTotal) return;
       const monthsSinceStart = Domain.diffMonths(f.startDate, ym);
-      if (monthsSinceStart >= 0) {
-        debts.push({
-          id: 'fin-' + f.id,
-          type: 'financing',
-          description: f.name || 'Financiamento',
-          amount: Number(f.monthlyPayment) || 0,
-          date: f.startDate,
-          meta: 'Parcela mensal • ' + (Number(f.remainingMonths) || 0) + 'x restantes',
-          icon: 'credit-card'
-        });
+      if (monthsSinceStart >= 0 && monthsSinceStart < f.installmentsTotal) {
+        const installmentValue = Number(f.installmentValue) || 0;
+        const paid = this.getDebtPaidInstallments(f);
+        const remaining = this.getDebtRemainingInstallments(f);
+        const currentInstallment = monthsSinceStart + 1;
+        debts.push({ id: 'fin-' + f.id, type: 'financing', description: f.name || 'Financiamento', amount: installmentValue, date: f.startDate, meta: `Parcela ${currentInstallment}/${f.installmentsTotal} • ${paid} pagas, ${remaining} restantes`, icon: 'credit-card' });
       }
     });
-
     this.state.loans.forEach(l => {
-      if (!l.startDate || Number(l.amount) <= 0) return;
+      if (!l.startDate || !l.installmentsTotal) return;
       const monthsSinceStart = Domain.diffMonths(l.startDate, ym);
-      if (monthsSinceStart >= 0) {
-        const estimatedInstallment = (Number(l.amount) || 0) / 12;
-        debts.push({
-          id: 'loan-' + l.id,
-          type: 'loan',
-          description: l.description || 'Empréstimo',
-          amount: Math.round(estimatedInstallment * 100) / 100,
-          date: l.startDate,
-          meta: 'Parcela estimada • Juros ' + (Number(l.interestRate) || 0) + '% a.m.',
-          icon: 'landmark'
-        });
+      if (monthsSinceStart >= 0 && monthsSinceStart < l.installmentsTotal) {
+        const installmentValue = Number(l.installmentValue) || 0;
+        const paid = this.getDebtPaidInstallments(l);
+        const remaining = this.getDebtRemainingInstallments(l);
+        const currentInstallment = monthsSinceStart + 1;
+        debts.push({ id: 'loan-' + l.id, type: 'loan', description: l.description || 'Empréstimo', amount: installmentValue, date: l.startDate, meta: `Parcela ${currentInstallment}/${l.installmentsTotal} • ${paid} pagas, ${remaining} restantes`, icon: 'landmark' });
       }
     });
-
     return debts;
   },
 
   renderDashboard() {
     const ym = document.getElementById('dash-month').value;
     if (!ym) return;
-    const incs = this.state.incomes.filter(i => (i.date || '').startsWith(ym));
-    const exps = this.state.expenses.filter(e => (e.date || '').startsWith(ym));
-    const income = incs.reduce((s, i) => s + (Number(i.amount) || 0), 0);
-    const expense = exps.reduce((s, e) => s + (Number(e.amount) || 0), 0);
     
+    const incs = this.state.incomes.filter(i => {
+      if (i.installmentType === 'installment' && i.installmentsTotal) {
+        for (let j = 0; j < i.installmentsTotal; j++) if (Domain.addMonths(i.startDate, j).startsWith(ym)) return true;
+        return false;
+      }
+      return (i.date || '').startsWith(ym);
+    });
+    
+    const exps = this.state.expenses.filter(e => this.expenseInMonth(e, ym));
+    const income = incs.reduce((s, i) => s + (Number(i.totalAmount || i.amount) || 0), 0);
+    const expense = exps.reduce((s, e) => s + this.getInstallmentValueForMonth(e, ym), 0);
     const monthlyDebts = this.getMonthlyDebts(ym);
     const debts = monthlyDebts.reduce((s, d) => s + (Number(d.amount) || 0), 0);
-    
     const balance = income - expense - debts;
 
     const bal = document.getElementById('dash-balance');
@@ -1678,775 +2105,136 @@ const App = {
     document.getElementById('dash-debts').textContent = Domain.fmt(debts);
 
     const byCat = {};
-    exps.forEach(e => {
-      const cat = e.category || 'Sem categoria';
-      if (!byCat[cat]) byCat[cat] = [];
-      byCat[cat].push(e);
-    });
-
-    const catEntries = Object.entries(byCat).map(([cat, items]) => ({
-      category: cat,
-      items: items.sort((a, b) => (a.date || '').localeCompare(b.date || '')),
-      total: items.reduce((s, i) => s + (Number(i.amount) || 0), 0),
-      count: items.length
-    })).sort((a, b) => b.total - a.total);
+    exps.forEach(e => { const cat = e.category || 'Sem categoria'; if (!byCat[cat]) byCat[cat] = []; byCat[cat].push(e); });
+    const catEntries = Object.entries(byCat).map(([cat, items]) => ({ category: cat, items: items.sort((a, b) => (a.startDate || a.date || '').localeCompare(b.startDate || b.date || '')), total: items.reduce((s, i) => s + this.getInstallmentValueForMonth(i, ym), 0), count: items.length })).sort((a, b) => b.total - a.total);
 
     const summaryContainer = document.getElementById('dash-summary');
-    if (!catEntries.length && !monthlyDebts.length) {
-      summaryContainer.innerHTML = '<div class="empty" style="padding:24px;">Sem movimentação neste mês.</div>';
-    } else if (!catEntries.length) {
-      summaryContainer.innerHTML = '<div class="empty" style="padding:24px;">Sem despesas avulsas neste mês.</div>';
-    } else {
+    if (!catEntries.length && !monthlyDebts.length) summaryContainer.innerHTML = '<div class="empty" style="padding:24px;">Sem movimentação neste mês.</div>';
+    else if (!catEntries.length) summaryContainer.innerHTML = '<div class="empty" style="padding:24px;">Sem despesas avulsas neste mês.</div>';
+    else {
       const maxTotal = Math.max(...catEntries.map(c => c.total));
       summaryContainer.innerHTML = catEntries.map(c => {
         const pct = maxTotal > 0 ? (c.total / maxTotal * 100) : 0;
-        return `
-          <div style="margin-bottom:16px;">
-            <div class="dash-summary-row">
-              <div class="cat-pill">
-                <span class="dot"></span>
-                <span>${Domain.escapeHtml(c.category)}</span>
-                <span style="color:var(--text-secondary); font-size:12px; font-weight:500;">(${c.count})</span>
-              </div>
-              <span style="font-weight:700; color:var(--danger); font-size:14px;">${Domain.fmt(c.total)}</span>
-            </div>
-            <div class="progress-bar"><div class="progress-fill" style="width:${pct}%; background:linear-gradient(90deg, var(--danger) 0%, #dc2626 100%);"></div></div>
-          </div>
-        `;
+        return `<div style="margin-bottom:16px;"><div class="dash-summary-row"><div class="cat-pill"><span class="dot"></span><span>${Domain.escapeHtml(c.category)}</span><span style="color:var(--text-secondary); font-size:12px; font-weight:500;">(${c.count})</span></div><span style="font-weight:700; color:var(--danger); font-size:14px;">${Domain.fmt(c.total)}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%; background:linear-gradient(90deg, var(--danger) 0%, #dc2626 100%);"></div></div></div>`;
       }).join('');
     }
 
     const categoriesContainer = document.getElementById('dash-categories');
-    if (!catEntries.length) {
-      categoriesContainer.innerHTML = '<div class="empty">Nenhum gasto avulso neste mês.</div>';
-    } else {
+    if (!catEntries.length) categoriesContainer.innerHTML = '<div class="empty">Nenhum gasto avulso neste mês.</div>';
+    else {
       categoriesContainer.innerHTML = catEntries.map(c => {
         const safeCat = Domain.escapeHtml(c.category).replace(/'/g, "\\'");
         const itemsHtml = c.items.map(e => {
-          const meta = [
-            Domain.fmtDate(e.date),
-            e.installments ? `${e.installments.current}/${e.installments.total}` : ''
-          ].filter(Boolean).join(' • ');
-          return `
-            <div class="category-item-row">
-              <div style="flex:1; min-width:0;">
-                <div class="item-desc">${Domain.escapeHtml(e.description)}</div>
-                <div class="item-meta">${Domain.escapeHtml(meta)}</div>
-              </div>
-              <div class="item-amount">${Domain.fmt(e.amount)}</div>
-            </div>
-          `;
+          const paid = this.getPaidInstallments(e, ym);
+          const meta = [Domain.fmtDate(e.startDate || e.date), e.installmentType === 'installment' && e.installmentsTotal > 1 ? `${paid}/${e.installmentsTotal} pagas • ${Domain.fmt(e.installmentValue)}/parcela` : 'À vista'].filter(Boolean).join(' • ');
+          return `<div class="category-item-row"><div style="flex:1; min-width:0;"><div class="item-desc">${Domain.escapeHtml(e.description)}</div><div class="item-meta">${Domain.escapeHtml(meta)}</div></div><div class="item-amount">${Domain.fmt(this.getInstallmentValueForMonth(e, ym))}</div></div>`;
         }).join('');
-
-        return `
-          <div class="category-block">
-            <div class="category-header">
-              <div class="category-header-left">
-                <div class="cat-title">${Domain.escapeHtml(c.category)}</div>
-                <div class="cat-count">${c.count} ${c.count === 1 ? 'item' : 'itens'}</div>
-              </div>
-              <div class="category-total">${Domain.fmt(c.total)}</div>
-              <button class="share-btn" onclick="App.shareCategory('${safeCat}')" title="Compartilhar como imagem">
-                <i data-lucide="share-2"></i>
-              </button>
-            </div>
-            <div class="category-items">${itemsHtml}</div>
-          </div>
-        `;
+        return `<div class="category-block"><div class="category-header"><div class="category-header-left"><div class="cat-title">${Domain.escapeHtml(c.category)}</div><div class="cat-count">${c.count} ${c.count === 1 ? 'item' : 'itens'}</div></div><div class="category-total">${Domain.fmt(c.total)}</div><button class="share-btn" onclick="App.shareCategory('${safeCat}')"><i data-lucide="share-2"></i></button></div><div class="category-items">${itemsHtml}</div></div>`;
       }).join('');
     }
-
     this.renderDashboardDebts(monthlyDebts);
   },
 
   renderDashboardDebts(monthlyDebts) {
     const container = document.getElementById('dash-debts-detail');
-    
-    if (!monthlyDebts.length) {
-      container.innerHTML = '<div class="empty">Nenhuma dívida ativa neste mês.</div>';
-      return;
-    }
-
+    if (!monthlyDebts.length) { container.innerHTML = '<div class="empty">Nenhuma dívida ativa neste mês.</div>'; return; }
     const financings = monthlyDebts.filter(d => d.type === 'financing');
     const loans = monthlyDebts.filter(d => d.type === 'loan');
-    
     const totalDebts = monthlyDebts.reduce((s, d) => s + (Number(d.amount) || 0), 0);
-
-    const itemsHtml = monthlyDebts.map(d => `
-      <div class="category-item-row">
-        <div style="flex:1; min-width:0; display:flex; align-items:center; gap:12px;">
-          <div style="width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:${d.type === 'financing' ? 'var(--primary-light)' : 'var(--purple-light)'}; flex-shrink:0;">
-            <i data-lucide="${d.icon}" style="width: 18px; height: 18px; color: ${d.type === 'financing' ? 'var(--primary)' : 'var(--purple)'}"></i>
-          </div>
-          <div style="min-width:0; flex:1;">
-            <div class="item-desc">${Domain.escapeHtml(d.description)}</div>
-            <div class="item-meta">${Domain.escapeHtml(d.meta)}</div>
-          </div>
-        </div>
-        <div class="item-amount purple">${Domain.fmt(d.amount)}</div>
-      </div>
-    `).join('');
-
-    container.innerHTML = `
-      <div class="category-block">
-        <div class="category-header" style="background: linear-gradient(135deg, var(--purple-light) 0%, #ffffff 100%);">
-          <div class="category-header-left">
-            <div class="cat-title">
-              <i data-lucide="landmark" style="width: 18px; height: 18px; color: var(--purple);"></i>
-              Dívidas Ativas
-            </div>
-            <div class="cat-count">
-              ${financings.length} ${financings.length === 1 ? 'financiamento' : 'financiamentos'} • 
-              ${loans.length} ${loans.length === 1 ? 'empréstimo' : 'empréstimos'}
-            </div>
-          </div>
-          <div class="category-total purple">${Domain.fmt(totalDebts)}</div>
-          <button class="share-btn purple" onclick="App.shareDebts()" title="Compartilhar resumo de dívidas">
-            <i data-lucide="share-2"></i>
-          </button>
-        </div>
-        <div class="category-items">${itemsHtml}</div>
-      </div>
-    `;
+    const itemsHtml = monthlyDebts.map(d => `<div class="category-item-row"><div style="flex:1; min-width:0; display:flex; align-items:center; gap:12px;"><div style="width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:${d.type === 'financing' ? 'var(--primary-light)' : 'var(--purple-light)'}; flex-shrink:0;"><i data-lucide="${d.icon}" style="width: 18px; height: 18px; color: ${d.type === 'financing' ? 'var(--primary)' : 'var(--purple)'}"></i></div><div style="min-width:0; flex:1;"><div class="item-desc">${Domain.escapeHtml(d.description)}</div><div class="item-meta">${Domain.escapeHtml(d.meta)}</div></div></div><div class="item-amount purple">${Domain.fmt(d.amount)}</div></div>`).join('');
+    container.innerHTML = `<div class="category-block"><div class="category-header" style="background: linear-gradient(135deg, var(--purple-light) 0%, #ffffff 100%);"><div class="category-header-left"><div class="cat-title"><i data-lucide="landmark" style="width: 18px; height: 18px; color: var(--purple);"></i> Dívidas Ativas</div><div class="cat-count">${financings.length} ${financings.length === 1 ? 'financiamento' : 'financiamentos'} • ${loans.length} ${loans.length === 1 ? 'empréstimo' : 'empréstimos'}</div></div><div class="category-total purple">${Domain.fmt(totalDebts)}</div><button class="share-btn purple" onclick="App.shareDebts()"><i data-lucide="share-2"></i></button></div><div class="category-items">${itemsHtml}</div></div>`;
   },
 
-  generateReceiptImage(categoryName, items, total) {
-    const ym = document.getElementById('dash-month').value;
-    const monthLabel = Domain.fmtMonth(ym);
-    const now = new Date();
-    const generatedAt = now.toLocaleString('pt-BR');
-
-    const width = 600;
-    const padding = 40;
-    const headerHeight = 160;
-    const footerHeight = 100;
-    const itemRowHeight = 48;
-    const height = headerHeight + (items.length * itemRowHeight) + footerHeight + 40;
-
-    const canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext('2d');
-
-    ctx.fillStyle = '#fefcf3';
-    ctx.fillRect(0, 0, width, height);
-
-    ctx.strokeStyle = '#1e293b';
-    ctx.setLineDash([4, 4]);
-    ctx.lineWidth = 2;
-    ctx.strokeRect(15, 15, width - 30, height - 30);
-    ctx.setLineDash([]);
-
-    ctx.fillStyle = '#1e293b';
-    ctx.textAlign = 'center';
-    ctx.font = 'bold 14px monospace';
-    ctx.fillText('════════════════════════════════', width / 2, 50);
-
-    ctx.font = 'bold 28px -apple-system, sans-serif';
-    ctx.fillText('FinApp', width / 2, 82);
-
-    ctx.font = 'bold 12px monospace';
-    ctx.fillStyle = '#64748b';
-    ctx.fillText('EXTRATO DE GASTOS POR CATEGORIA', width / 2, 105);
-
-    ctx.font = '13px monospace';
-    ctx.fillStyle = '#1e293b';
-    ctx.fillText('Período: ' + monthLabel, width / 2, 128);
-
-    ctx.font = 'bold 14px monospace';
-    ctx.fillStyle = '#1e293b';
-    ctx.fillText('════════════════════════════════', width / 2, 148);
-
-    let y = headerHeight;
-    ctx.textAlign = 'center';
-    ctx.font = 'bold 20px -apple-system, sans-serif';
-    ctx.fillStyle = '#0f172a';
-    ctx.fillText(categoryName.toUpperCase(), width / 2, y);
-    y += 30;
-
-    ctx.strokeStyle = '#94a3b8';
-    ctx.setLineDash([2, 3]);
-    ctx.beginPath();
-    ctx.moveTo(padding, y);
-    ctx.lineTo(width - padding, y);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    y += 16;
-
-    ctx.font = 'bold 11px monospace';
-    ctx.fillStyle = '#64748b';
-    ctx.textAlign = 'left';
-    ctx.fillText('DESCRIÇÃO', padding, y);
-    ctx.textAlign = 'right';
-    ctx.fillText('DATA', width - padding - 110, y);
-    ctx.fillText('VALOR', width - padding, y);
-    y += 18;
-
-    ctx.strokeStyle = '#cbd5e1';
-    ctx.beginPath();
-    ctx.moveTo(padding, y);
-    ctx.lineTo(width - padding, y);
-    ctx.stroke();
-    y += 8;
-
-    items.forEach(item => {
-      const desc = Domain.truncate(item.description || 'Sem descrição', 32);
-      const dateStr = Domain.fmtDate(item.date);
-      const amountStr = Domain.fmt(item.amount);
-
-      ctx.font = '14px -apple-system, sans-serif';
-      ctx.fillStyle = '#0f172a';
-      ctx.textAlign = 'left';
-      ctx.fillText(desc, padding, y + 14);
-
-      ctx.font = '11px monospace';
-      ctx.fillStyle = '#64748b';
-      ctx.textAlign = 'right';
-      ctx.fillText(dateStr, width - padding - 110, y + 14);
-
-      ctx.font = 'bold 13px -apple-system, sans-serif';
-      ctx.fillStyle = '#dc2626';
-      ctx.fillText(amountStr, width - padding, y + 14);
-
-      ctx.strokeStyle = '#e2e8f0';
-      ctx.setLineDash([1, 2]);
-      ctx.beginPath();
-      ctx.moveTo(padding, y + itemRowHeight - 8);
-      ctx.lineTo(width - padding, y + itemRowHeight - 8);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      y += itemRowHeight;
-    });
-
-    y += 10;
-    ctx.strokeStyle = '#1e293b';
-    ctx.setLineDash([4, 4]);
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(padding, y);
-    ctx.lineTo(width - padding, y);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    y += 24;
-
-    ctx.font = 'bold 13px monospace';
-    ctx.fillStyle = '#1e293b';
-    ctx.textAlign = 'left';
-    ctx.fillText('TOTAL (' + items.length + (items.length === 1 ? ' ITEM):' : ' ITENS):'), padding, y);
-
-    ctx.font = 'bold 22px -apple-system, sans-serif';
-    ctx.fillStyle = '#dc2626';
-    ctx.textAlign = 'right';
-    ctx.fillText(Domain.fmt(total), width - padding, y + 2);
-    y += 30;
-
-    ctx.font = 'bold 11px monospace';
-    ctx.fillStyle = '#1e293b';
-    ctx.textAlign = 'center';
-    ctx.fillText('════════════════════════════════', width / 2, y);
-    y += 18;
-
-    ctx.font = '11px monospace';
-    ctx.fillStyle = '#64748b';
-    ctx.fillText('Gerado em ' + generatedAt, width / 2, y);
-    y += 16;
-    ctx.fillText('FinApp • Controle Financeiro Pessoal', width / 2, y);
-
-    return canvas;
-  },
-
-  generateDebtsReceipt(debts, total) {
-    const ym = document.getElementById('dash-month').value;
-    const monthLabel = Domain.fmtMonth(ym);
-    const now = new Date();
-    const generatedAt = now.toLocaleString('pt-BR');
-
-    const width = 600;
-    const padding = 40;
-    const headerHeight = 160;
-    const footerHeight = 100;
-    const itemRowHeight = 60;
-    const height = headerHeight + (debts.length * itemRowHeight) + footerHeight + 40;
-
-    const canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext('2d');
-
-    ctx.fillStyle = '#fefcf3';
-    ctx.fillRect(0, 0, width, height);
-
-    ctx.strokeStyle = '#1e293b';
-    ctx.setLineDash([4, 4]);
-    ctx.lineWidth = 2;
-    ctx.strokeRect(15, 15, width - 30, height - 30);
-    ctx.setLineDash([]);
-
-    ctx.fillStyle = '#1e293b';
-    ctx.textAlign = 'center';
-    ctx.font = 'bold 14px monospace';
-    ctx.fillText('════════════════════════════════', width / 2, 50);
-
-    ctx.font = 'bold 28px -apple-system, sans-serif';
-    ctx.fillText('FinApp', width / 2, 82);
-
-    ctx.font = 'bold 12px monospace';
-    ctx.fillStyle = '#64748b';
-    ctx.fillText('EXTRATO DE DÍVIDAS MENSAIS', width / 2, 105);
-
-    ctx.font = '13px monospace';
-    ctx.fillStyle = '#1e293b';
-    ctx.fillText('Período: ' + monthLabel, width / 2, 128);
-
-    ctx.font = 'bold 14px monospace';
-    ctx.fillStyle = '#1e293b';
-    ctx.fillText('════════════════════════════════', width / 2, 148);
-
-    let y = headerHeight;
-    ctx.textAlign = 'center';
-    ctx.font = 'bold 20px -apple-system, sans-serif';
-    ctx.fillStyle = '#6b21a8';
-    ctx.fillText('PARCELAS DO MÊS', width / 2, y);
-    y += 30;
-
-    ctx.strokeStyle = '#94a3b8';
-    ctx.setLineDash([2, 3]);
-    ctx.beginPath();
-    ctx.moveTo(padding, y);
-    ctx.lineTo(width - padding, y);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    y += 16;
-
-    ctx.font = 'bold 11px monospace';
-    ctx.fillStyle = '#64748b';
-    ctx.textAlign = 'left';
-    ctx.fillText('DESCRIÇÃO', padding, y);
-    ctx.textAlign = 'right';
-    ctx.fillText('TIPO', width - padding - 110, y);
-    ctx.fillText('VALOR', width - padding, y);
-    y += 18;
-
-    ctx.strokeStyle = '#cbd5e1';
-    ctx.beginPath();
-    ctx.moveTo(padding, y);
-    ctx.lineTo(width - padding, y);
-    ctx.stroke();
-    y += 8;
-
-    debts.forEach(d => {
-      const desc = Domain.truncate(d.description || 'Sem descrição', 30);
-      const typeLabel = d.type === 'financing' ? 'Financ.' : 'Emprést.';
-      const amountStr = Domain.fmt(d.amount);
-
-      ctx.font = '14px -apple-system, sans-serif';
-      ctx.fillStyle = '#0f172a';
-      ctx.textAlign = 'left';
-      ctx.fillText(desc, padding, y + 16);
-
-      ctx.font = '10px monospace';
-      ctx.fillStyle = '#64748b';
-      ctx.fillText(Domain.truncate(d.meta || '', 40), padding, y + 32);
-
-      ctx.font = 'bold 11px monospace';
-      ctx.fillStyle = d.type === 'financing' ? '#2563eb' : '#8b5cf6';
-      ctx.textAlign = 'right';
-      ctx.fillText(typeLabel, width - padding - 110, y + 22);
-
-      ctx.font = 'bold 13px -apple-system, sans-serif';
-      ctx.fillStyle = '#6b21a8';
-      ctx.fillText(amountStr, width - padding, y + 22);
-
-      ctx.strokeStyle = '#e2e8f0';
-      ctx.setLineDash([1, 2]);
-      ctx.beginPath();
-      ctx.moveTo(padding, y + itemRowHeight - 8);
-      ctx.lineTo(width - padding, y + itemRowHeight - 8);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      y += itemRowHeight;
-    });
-
-    y += 10;
-    ctx.strokeStyle = '#1e293b';
-    ctx.setLineDash([4, 4]);
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(padding, y);
-    ctx.lineTo(width - padding, y);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    y += 24;
-
-    ctx.font = 'bold 13px monospace';
-    ctx.fillStyle = '#1e293b';
-    ctx.textAlign = 'left';
-    ctx.fillText('TOTAL (' + debts.length + (debts.length === 1 ? ' PARCELA):' : ' PARCELAS):'), padding, y);
-
-    ctx.font = 'bold 22px -apple-system, sans-serif';
-    ctx.fillStyle = '#6b21a8';
-    ctx.textAlign = 'right';
-    ctx.fillText(Domain.fmt(total), width - padding, y + 2);
-    y += 30;
-
-    ctx.font = 'bold 11px monospace';
-    ctx.fillStyle = '#1e293b';
-    ctx.textAlign = 'center';
-    ctx.fillText('════════════════════════════════', width / 2, y);
-    y += 18;
-
-    ctx.font = '11px monospace';
-    ctx.fillStyle = '#64748b';
-    ctx.fillText('Gerado em ' + generatedAt, width / 2, y);
-    y += 16;
-    ctx.fillText('FinApp • Controle Financeiro Pessoal', width / 2, y);
-
-    return canvas;
-  },
-
-  async shareCategory(categoryName) {
-    const ym = document.getElementById('dash-month').value;
-    const items = this.state.expenses
-      .filter(e => (e.date || '').startsWith(ym) && (e.category || 'Sem categoria') === categoryName)
-      .sort((a, b) => (a.date || '').localeCompare(b.date || ''));
-
-    if (!items.length) {
-      this.showToast('Nenhum item para compartilhar nesta categoria.', 'error');
-      return;
-    }
-
-    const total = items.reduce((s, i) => s + (Number(i.amount) || 0), 0);
-    const canvas = this.generateReceiptImage(categoryName, items, total);
-
-    try {
-      const blob = await new Promise((resolve, reject) => {
-        canvas.toBlob(b => b ? resolve(b) : reject(new Error('Falha ao gerar imagem')), 'image/png');
-      });
-
-      const fileName = 'finapp-' + categoryName.toLowerCase().replace(/[^a-z0-9]/g, '-') + '-' + ym + '.png';
-      const file = new File([blob], fileName, { type: 'image/png' });
-
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        try {
-          await navigator.share({
-            files: [file],
-            title: 'FinApp - ' + categoryName,
-            text: 'Gastos com ' + categoryName + ' em ' + Domain.fmtMonth(ym) + ': ' + Domain.fmt(total)
-          });
-          return;
-        } catch (err) {
-          if (err.name === 'AbortError') return;
-          console.warn('Share failed, falling back to download', err);
-        }
-      }
-
-      this.downloadCanvas(canvas, fileName);
-      this.showToast('Imagem salva com sucesso!', 'success');
-    } catch (err) {
-      console.error('Share error:', err);
-      this.showToast('Erro ao gerar imagem: ' + err.message, 'error');
-    }
-  },
-
-  async shareDebts() {
-    const ym = document.getElementById('dash-month').value;
-    const debts = this.getMonthlyDebts(ym);
-
-    if (!debts.length) {
-      this.showToast('Nenhuma dívida ativa neste mês.', 'error');
-      return;
-    }
-
-    const total = debts.reduce((s, d) => s + (Number(d.amount) || 0), 0);
-    const canvas = this.generateDebtsReceipt(debts, total);
-
-    try {
-      const blob = await new Promise((resolve, reject) => {
-        canvas.toBlob(b => b ? resolve(b) : reject(new Error('Falha ao gerar imagem')), 'image/png');
-      });
-
-      const fileName = 'finapp-dividas-' + ym + '.png';
-      const file = new File([blob], fileName, { type: 'image/png' });
-
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        try {
-          await navigator.share({
-            files: [file],
-            title: 'FinApp - Dívidas ' + Domain.fmtMonth(ym),
-            text: 'Dívidas de ' + Domain.fmtMonth(ym) + ': ' + Domain.fmt(total)
-          });
-          return;
-        } catch (err) {
-          if (err.name === 'AbortError') return;
-          console.warn('Share failed, falling back to download', err);
-        }
-      }
-
-      this.downloadCanvas(canvas, fileName);
-      this.showToast('Imagem salva com sucesso!', 'success');
-    } catch (err) {
-      console.error('Share error:', err);
-      this.showToast('Erro ao gerar imagem: ' + err.message, 'error');
-    }
-  },
-
-  downloadCanvas(canvas, fileName) {
-    const link = document.createElement('a');
-    link.download = fileName;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-  },
-
-  openModal(type, editing = null) {
-    this.state.modal = { type, editing };
+  openModal(type, editing = null, prefillCategory = null) {
+    this.state.modal = { type, editing, prefillCategory };
     const sheet = document.getElementById('sheet');
     const backdrop = document.getElementById('sheet-backdrop');
     document.getElementById('sheet-title').textContent = this.getModalTitle(type, editing);
-    document.getElementById('sheet-content').innerHTML = this.buildForm(type, editing);
-    requestAnimationFrame(() => {
-      sheet.classList.add('open');
-      backdrop.classList.add('open');
-      
-      if (window.lucide) {
-        lucide.createIcons();
-      }
-    });
+    document.getElementById('sheet-content').innerHTML = this.buildForm(type, editing, prefillCategory);
+    requestAnimationFrame(() => { sheet.classList.add('open'); backdrop.classList.add('open'); if (window.lucide) lucide.createIcons(); });
   },
 
-  closeModal() {
-    document.getElementById('sheet').classList.remove('open');
-    document.getElementById('sheet-backdrop').classList.remove('open');
-    this.state.modal = { type: null, editing: null };
-  },
+  closeModal() { document.getElementById('sheet').classList.remove('open'); document.getElementById('sheet-backdrop').classList.remove('open'); this.state.modal = { type: null, editing: null, prefillCategory: null }; },
 
   getModalTitle(type, editing) {
-    const titles = {
-      income: editing ? 'Editar Receita' : 'Nova Receita',
-      expense: editing ? 'Editar Gasto' : 'Novo Gasto',
-      financing: editing ? 'Editar Financiamento' : 'Novo Financiamento',
-      loan: editing ? 'Editar Empréstimo' : 'Novo Empréstimo',
-      settings: 'Configurações',
-      categories: 'Gerenciar Categorias'
-    };
+    const titles = { income: editing ? 'Editar Receita' : 'Nova Receita', expense: editing ? 'Editar Gasto' : 'Novo Gasto', financing: editing ? 'Editar Financiamento' : 'Novo Financiamento', loan: editing ? 'Editar Empréstimo' : 'Novo Empréstimo', settings: 'Configurações', categories: 'Gerenciar Categorias' };
     return titles[type] || 'Formulário';
   },
 
-  buildForm(type, editing) {
+  buildForm(type, editing, prefillCategory = null) {
     const today = Domain.today();
     const e = editing || {};
-
     if (type === 'income' || type === 'expense') {
       const isExpense = type === 'expense';
+      const categoryValue = e.category || prefillCategory || '';
       return `
-        <div class="form-group">
-          <label class="form-label">Descrição</label>
-          <input class="input" id="f-desc" value="${Domain.escapeHtml(e.description || '')}" placeholder="Ex: Salário, Mercado...">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Valor (R$)</label>
-          <input class="input" id="f-amount" type="number" step="0.01" min="0.01" value="${e.amount || ''}" placeholder="0,00">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Categoria</label>
-          <select class="select" id="f-category">
-            <option value="">Selecione...</option>
-            ${this.state.categories.map(c => `<option value="${Domain.escapeHtml(c)}" ${c === e.category ? 'selected' : ''}>${Domain.escapeHtml(c)}</option>`).join('')}
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Data</label>
-          <input class="input" id="f-date" type="date" value="${e.date || today}">
-        </div>
-        <label class="checkbox-row">
-          <input type="checkbox" id="f-fixed" ${e.isFixed ? 'checked' : ''}>
-          <span>Lançamento fixo/mensal</span>
-        </label>
+        <div class="form-group"><label class="form-label">Descrição</label><input class="input" id="f-desc" value="${Domain.escapeHtml(e.description || '')}" placeholder="Ex: Salário, Mercado..."></div>
+        <div class="form-group"><label class="form-label">Valor Total (R$)</label><input class="input" id="f-amount" type="number" step="0.01" min="0.01" value="${e.totalAmount || e.amount || ''}" placeholder="0,00"></div>
+        <div class="form-group"><label class="form-label">Categoria</label><select class="select" id="f-category"><option value="">Selecione...</option>${this.state.categories.map(c => `<option value="${Domain.escapeHtml(c)}" ${c === categoryValue ? 'selected' : ''}>${Domain.escapeHtml(c)}</option>`).join('')}</select></div>
+        <div class="form-group"><label class="form-label">Data de Início</label><input class="input" id="f-date" type="date" value="${e.startDate || e.date || today}"></div>
+        <label class="checkbox-row"><input type="checkbox" id="f-fixed" ${e.isFixed ? 'checked' : ''}><span>Lançamento fixo/mensal</span></label>
         ${isExpense ? `
-          <div style="margin-top:16px;">
-            <label class="form-label">Tipo de Pagamento</label>
-            <div class="toggle-group">
-              <button type="button" class="toggle-btn ${(e.installmentType || 'cash') === 'cash' ? 'active blue' : ''}" onclick="App.toggleInstallment('cash')">À vista</button>
-              <button type="button" class="toggle-btn ${e.installmentType === 'installment' ? 'active blue' : ''}" onclick="App.toggleInstallment('installment')">Parcelado</button>
-            </div>
-          </div>
-          <div id="installment-fields" style="display:${e.installmentType === 'installment' ? 'block' : 'none'};">
-            <div class="form-group">
-              <label class="form-label">Número de parcelas</label>
-              <input class="input" id="f-inst-count" type="number" min="2" max="60" value="${e.installmentsCount || 2}">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Data de início</label>
-              <input class="input" id="f-inst-start" type="date" value="${e.startDate || today}" onchange="App.updateEndDate()">
-            </div>
-            <div class="info-text" id="f-end-date"></div>
-          </div>
+          <div style="margin-top:16px;"><label class="form-label">Tipo de Pagamento</label><div class="toggle-group"><button type="button" class="toggle-btn ${(e.installmentType || 'cash') === 'cash' ? 'active blue' : ''}" onclick="App.toggleInstallment('cash')">À vista</button><button type="button" class="toggle-btn ${e.installmentType === 'installment' ? 'active blue' : ''}" onclick="App.toggleInstallment('installment')">Parcelado</button></div></div>
+          <div id="installment-fields" style="display:${e.installmentType === 'installment' ? 'block' : 'none'};"><div class="form-group"><label class="form-label">Número de parcelas</label><input class="input" id="f-inst-count" type="number" min="2" max="60" value="${e.installmentsTotal || e.installmentsCount || 2}"></div><div class="form-group"><label class="form-label">Data de início (1ª parcela)</label><input class="input" id="f-inst-start" type="date" value="${e.startDate || today}" onchange="App.updateEndDate()"></div><div class="info-text" id="f-end-date"></div></div>
         ` : ''}
-        <div class="form-actions">
-          <button class="btn btn-ghost" onclick="App.closeModal()">Cancelar</button>
-          <button class="btn btn-primary" onclick="App.submitTx()">Salvar</button>
-        </div>
+        <div class="form-actions"><button class="btn btn-ghost" onclick="App.closeModal()">Cancelar</button><button class="btn btn-primary" onclick="App.submitTx()">Salvar</button></div>
       `;
     }
 
     if (type === 'financing') {
+      const installmentsTotal = e.installmentsTotal || 12;
+      const totalValue = e.totalValue || '';
+      const installmentValue = e.installmentValue || (totalValue && installmentsTotal ? (totalValue / installmentsTotal).toFixed(2) : '');
       return `
-        <div class="form-group">
-          <label class="form-label">Nome do bem</label>
-          <input class="input" id="f-name" value="${Domain.escapeHtml(e.name || '')}" placeholder="Ex: Carro, Imóvel">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Valor total</label>
-          <input class="input" id="f-total" type="number" step="0.01" value="${e.totalValue || ''}">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Valor da parcela</label>
-          <input class="input" id="f-monthly" type="number" step="0.01" value="${e.monthlyPayment || ''}">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Parcelas restantes</label>
-          <input class="input" id="f-remaining" type="number" min="0" value="${e.remainingMonths || ''}">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Valor já pago</label>
-          <input class="input" id="f-paid" type="number" step="0.01" value="${e.paidValue || 0}">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Data de início</label>
-          <input class="input" id="f-start" type="date" value="${e.startDate || today}">
-        </div>
-        <div class="form-actions">
-          <button class="btn btn-ghost" onclick="App.closeModal()">Cancelar</button>
-          <button class="btn btn-primary" onclick="App.submitFinancing()">Salvar</button>
-        </div>
+        <div class="form-group"><label class="form-label">Nome do bem</label><input class="input" id="f-name" value="${Domain.escapeHtml(e.name || '')}" placeholder="Ex: Carro, Imóvel"></div>
+        <div class="form-group"><label class="form-label">Valor total (R$)</label><input class="input" id="f-total" type="number" step="0.01" min="0.01" value="${totalValue}" placeholder="0,00" oninput="App.updateFinancingInstallment()"></div>
+        <div class="form-group"><label class="form-label">Quantidade de parcelas</label><input class="input" id="f-installments" type="number" min="1" max="480" value="${installmentsTotal}" oninput="App.updateFinancingInstallment()"></div>
+        <div class="info-text" id="f-installment-info" style="margin-bottom:16px;"><i data-lucide="calculator" style="width: 14px; height: 14px; flex-shrink: 0; margin-top: 2px;"></i><span>Valor da parcela: <b id="f-installment-value">${installmentValue ? Domain.fmt(installmentValue) : 'R$ 0,00'}</b></span></div>
+        <div class="form-group"><label class="form-label">Data da 1ª parcela</label><input class="input" id="f-start" type="date" value="${e.startDate || today}"></div>
+        <div class="form-actions"><button class="btn btn-ghost" onclick="App.closeModal()">Cancelar</button><button class="btn btn-primary" onclick="App.submitFinancing()">Salvar</button></div>
       `;
     }
 
     if (type === 'loan') {
+      const installmentsTotal = e.installmentsTotal || 12;
+      const totalAmount = e.totalAmount || e.amount || '';
+      const installmentValue = e.installmentValue || (totalAmount && installmentsTotal ? (totalAmount / installmentsTotal).toFixed(2) : '');
       return `
-        <div class="form-group">
-          <label class="form-label">Descrição</label>
-          <input class="input" id="f-ldesc" value="${Domain.escapeHtml(e.description || '')}" placeholder="Ex: Empréstimo pessoal">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Valor total</label>
-          <input class="input" id="f-lamount" type="number" step="0.01" value="${e.amount || ''}">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Taxa de juros (% a.m.)</label>
-          <input class="input" id="f-lrate" type="number" step="0.01" value="${e.interestRate || ''}">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Data de início</label>
-          <input class="input" id="f-lstart" type="date" value="${e.startDate || today}">
-        </div>
-        <div class="form-actions">
-          <button class="btn btn-ghost" onclick="App.closeModal()">Cancelar</button>
-          <button class="btn btn-primary" onclick="App.submitLoan()">Salvar</button>
-        </div>
+        <div class="form-group"><label class="form-label">Descrição</label><input class="input" id="f-ldesc" value="${Domain.escapeHtml(e.description || '')}" placeholder="Ex: Empréstimo pessoal"></div>
+        <div class="form-group"><label class="form-label">Valor total (R$)</label><input class="input" id="f-lamount" type="number" step="0.01" min="0.01" value="${totalAmount}" placeholder="0,00" oninput="App.updateLoanInstallment()"></div>
+        <div class="form-group"><label class="form-label">Quantidade de parcelas</label><input class="input" id="f-linstallments" type="number" min="1" max="480" value="${installmentsTotal}" oninput="App.updateLoanInstallment()"></div>
+        <div class="info-text" id="f-loan-installment-info" style="margin-bottom:16px;"><i data-lucide="calculator" style="width: 14px; height: 14px; flex-shrink: 0; margin-top: 2px;"></i><span>Valor da parcela: <b id="f-loan-installment-value">${installmentValue ? Domain.fmt(installmentValue) : 'R$ 0,00'}</b></span></div>
+        <div class="form-group"><label class="form-label">Data do 1º pagamento</label><input class="input" id="f-lstart" type="date" value="${e.startDate || today}"></div>
+        <div class="form-actions"><button class="btn btn-ghost" onclick="App.closeModal()">Cancelar</button><button class="btn btn-primary" onclick="App.submitLoan()">Salvar</button></div>
       `;
     }
 
-    // ===== NOVO: SETTINGS COM IMPORT/EXPORT =====
     if (type === 'settings') {
-      const stats = {
-        incomes: this.state.incomes.length,
-        expenses: this.state.expenses.length,
-        financings: this.state.financings.length,
-        loans: this.state.loans.length,
-        categories: this.state.categories.length
-      };
+      const stats = { incomes: this.state.incomes.length, expenses: this.state.expenses.length, financings: this.state.financings.length, loans: this.state.loans.length, categories: this.state.categories.length };
       const totalRecords = stats.incomes + stats.expenses + stats.financings + stats.loans;
-      
       return `
-        <div class="settings-card">
-          <div class="settings-card-header">
-            <i data-lucide="database"></i>
-            Seus Dados
-          </div>
-          <div class="data-stats">
-            <div class="data-stat">
-              <span class="data-stat-label">Total de registros</span>
-              <span class="data-stat-value">${totalRecords}</span>
-            </div>
-            <div class="data-stat">
-              <span class="data-stat-label">Categorias</span>
-              <span class="data-stat-value">${stats.categories}</span>
-            </div>
-            <div class="data-stat">
-              <span class="data-stat-label">Receitas</span>
-              <span class="data-stat-value">${stats.incomes}</span>
-            </div>
-            <div class="data-stat">
-              <span class="data-stat-label">Despesas</span>
-              <span class="data-stat-value">${stats.expenses}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="settings-card">
-          <div class="settings-card-header">
-            <i data-lucide="download-cloud"></i>
-            Backup & Migração
-          </div>
-          <div class="settings-card-desc">
-            Exporte seus dados para backup ou migre para outro dispositivo. O arquivo JSON contém todas as suas receitas, despesas, financiamentos, empréstimos e categorias.
-          </div>
-          <div class="settings-btn-row">
-            <button class="btn btn-primary btn-sm" onclick="App.exportData()">
-              <i data-lucide="download"></i>
-              Exportar JSON
-            </button>
-            <button class="btn btn-ghost btn-sm" onclick="App.triggerImport()">
-              <i data-lucide="upload"></i>
-              Importar JSON
-            </button>
-          </div>
-        </div>
-
-        <div class="settings-card">
-          <div class="settings-card-header">
-            <i data-lucide="tags"></i>
-            Categorias
-          </div>
-          <div class="settings-card-desc">
-            Gerencie as categorias de gastos utilizadas no app.
-          </div>
-          <button class="btn btn-ghost btn-sm" onclick="App.closeModal(); setTimeout(() => App.openCategoryManager(), 300);">
-            <i data-lucide="settings-2"></i>
-            Gerenciar Categorias
-          </button>
-        </div>
-
-        <div class="settings-card" style="border: 1px solid var(--danger-light);">
-          <div class="settings-card-header" style="color: var(--danger);">
-            <i data-lucide="alert-triangle" style="color: var(--danger);"></i>
-            Zona de Perigo
-          </div>
-          <div class="settings-card-desc">
-            Esta ação é irreversível. Todos os seus dados serão apagados permanentemente.
-          </div>
-          <button class="btn btn-ghost btn-sm" style="color:var(--danger); border-color: var(--danger-light);" onclick="App.clearAll()">
-            <i data-lucide="trash-2"></i>
-            Apagar Todos os Dados
-          </button>
-        </div>
-
-        <div class="form-actions">
-          <button class="btn btn-primary" style="grid-column: span 2;" onclick="App.closeModal()">
-            <i data-lucide="check"></i>
-            Fechar
-          </button>
-        </div>
+        <div class="settings-card"><div class="settings-card-header"><i data-lucide="database"></i> Seus Dados</div><div class="data-stats"><div class="data-stat"><span class="data-stat-label">Total de registros</span><span class="data-stat-value">${totalRecords}</span></div><div class="data-stat"><span class="data-stat-label">Categorias</span><span class="data-stat-value">${stats.categories}</span></div><div class="data-stat"><span class="data-stat-label">Receitas</span><span class="data-stat-value">${stats.incomes}</span></div><div class="data-stat"><span class="data-stat-label">Despesas</span><span class="data-stat-value">${stats.expenses}</span></div></div></div>
+        <div class="settings-card"><div class="settings-card-header"><i data-lucide="download-cloud"></i> Backup & Migração</div><div class="settings-card-desc">Exporte seus dados para backup ou migre para outro dispositivo.</div><div class="settings-btn-row"><button class="btn btn-primary btn-sm" onclick="App.exportData()"><i data-lucide="download"></i> Exportar JSON</button><button class="btn btn-ghost btn-sm" onclick="App.triggerImport()"><i data-lucide="upload"></i> Importar JSON</button></div></div>
+        <div class="settings-card"><div class="settings-card-header"><i data-lucide="tags"></i> Categorias</div><div class="settings-card-desc">Gerencie as categorias de gastos.</div><button class="btn btn-ghost btn-sm" onclick="App.closeModal(); setTimeout(() => App.openCategoryManager(), 300);"><i data-lucide="settings-2"></i> Gerenciar Categorias</button></div>
+        <div class="settings-card" style="border: 1px solid var(--danger-light);"><div class="settings-card-header" style="color: var(--danger);"><i data-lucide="alert-triangle" style="color: var(--danger);"></i> Zona de Perigo</div><div class="settings-card-desc">Esta ação é irreversível.</div><button class="btn btn-ghost btn-sm" style="color:var(--danger); border-color: var(--danger-light);" onclick="App.clearAll()"><i data-lucide="trash-2"></i> Apagar Todos os Dados</button></div>
+        <div class="form-actions"><button class="btn btn-primary" style="grid-column: span 2;" onclick="App.closeModal()"><i data-lucide="check"></i> Fechar</button></div>
       `;
     }
-
-    if (type === 'categories') {
-      return this.buildCategoryManagerContent();
-    }
-
+    if (type === 'categories') return this.buildCategoryManagerContent();
     return '';
+  },
+
+  updateFinancingInstallment() {
+    const total = parseFloat(document.getElementById('f-total').value) || 0;
+    const count = parseInt(document.getElementById('f-installments').value) || 1;
+    const val = count > 0 ? total / count : 0;
+    const el = document.getElementById('f-installment-value'); if (el) el.textContent = Domain.fmt(val);
+  },
+  updateLoanInstallment() {
+    const total = parseFloat(document.getElementById('f-lamount').value) || 0;
+    const count = parseInt(document.getElementById('f-linstallments').value) || 1;
+    const val = count > 0 ? total / count : 0;
+    const el = document.getElementById('f-loan-installment-value'); if (el) el.textContent = Domain.fmt(val);
   },
 
   openCategoryManager() {
@@ -2455,257 +2243,88 @@ const App = {
     const backdrop = document.getElementById('sheet-backdrop');
     document.getElementById('sheet-title').textContent = 'Gerenciar Categorias';
     document.getElementById('sheet-content').innerHTML = this.buildCategoryManagerContent();
-    requestAnimationFrame(() => {
-      sheet.classList.add('open');
-      backdrop.classList.add('open');
-      
-      if (window.lucide) {
-        lucide.createIcons();
-      }
-    });
+    requestAnimationFrame(() => { sheet.classList.add('open'); backdrop.classList.add('open'); if (window.lucide) lucide.createIcons(); });
   },
-
+  
   buildCategoryManagerContent() {
     const cats = this.state.categories;
-    const listHtml = cats.length
-      ? cats.map(c => `
-          <div class="category-item">
-            <span class="cat-name">
-              <i data-lucide="tag" style="width: 16px; height: 16px; display: inline; vertical-align: middle; margin-right: 8px; color: var(--primary);"></i>
-              ${Domain.escapeHtml(c)}
-            </span>
-            <div class="list-actions">
-              <button class="icon-action" onclick="App.editCategory('${Domain.escapeHtml(c).replace(/'/g, "\\'")}')" title="Editar">
-                <i data-lucide="pencil"></i>
-              </button>
-              <button class="icon-action danger" onclick="App.deleteCategory('${Domain.escapeHtml(c).replace(/'/g, "\\'")}')" title="Excluir">
-                <i data-lucide="trash-2"></i>
-              </button>
-            </div>
-          </div>
-        `).join('')
-      : '<div class="empty" style="padding:24px;">Nenhuma categoria cadastrada.</div>';
-
-    return `
-      <div class="form-group">
-        <label class="form-label">Adicionar nova categoria</label>
-        <div style="display:flex; gap:10px;">
-          <input class="input" id="new-cat-input" placeholder="Nome da categoria" style="flex:1;">
-          <button class="btn btn-primary" style="width:auto; padding:14px 24px;" onclick="App.addCategoryFromManager()">
-            <i data-lucide="plus"></i>
-          </button>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Categorias (${cats.length})</label>
-        <div class="list" style="margin-top:10px;">${listHtml}</div>
-      </div>
-      <div class="info-text" style="margin-top:16px;">
-        <i data-lucide="alert-circle" style="width: 14px; height: 14px; flex-shrink: 0; margin-top: 2px;"></i>
-        <span>Editar uma categoria atualiza todos os lançamentos existentes. Excluir remove a categoria, mas os lançamentos ficam sem categoria.</span>
-      </div>
-      <div class="form-actions">
-        <button class="btn btn-primary" style="grid-column: span 2;" onclick="App.closeModal()">Fechar</button>
-      </div>
-    `;
+    const listHtml = cats.length ? cats.map(c => `<div class="category-item"><span class="cat-name"><i data-lucide="tag" style="width: 16px; height: 16px; display: inline; vertical-align: middle; margin-right: 8px; color: var(--primary);"></i>${Domain.escapeHtml(c)}</span><div class="list-actions"><button class="icon-action" onclick="App.editCategory('${Domain.escapeHtml(c).replace(/'/g, "\\'")}')"><i data-lucide="pencil"></i></button><button class="icon-action danger" onclick="App.deleteCategory('${Domain.escapeHtml(c).replace(/'/g, "\\'")}')"><i data-lucide="trash-2"></i></button></div></div>`).join('') : '<div class="empty" style="padding:24px;">Nenhuma categoria cadastrada.</div>';
+    return `<div class="form-group"><label class="form-label">Adicionar nova categoria</label><div style="display:flex; gap:10px;"><input class="input" id="new-cat-input" placeholder="Nome da categoria" style="flex:1;"><button class="btn btn-primary" style="width:auto; padding:14px 24px;" onclick="App.addCategoryFromManager()"><i data-lucide="plus"></i></button></div></div><div class="form-group"><label class="form-label">Categorias (${cats.length})</label><div class="list" style="margin-top:10px;">${listHtml}</div></div><div class="info-text" style="margin-top:16px;"><i data-lucide="alert-circle" style="width: 14px; height: 14px; flex-shrink: 0; margin-top: 2px;"></i><span>Editar uma categoria atualiza todos os lançamentos existentes.</span></div><div class="form-actions"><button class="btn btn-primary" style="grid-column: span 2;" onclick="App.closeModal()">Fechar</button></div>`;
   },
 
   addCategoryFromManager() {
     const input = document.getElementById('new-cat-input');
     const val = input.value.trim();
-    if (!val) {
-      this.showToast('Digite um nome para a categoria.', 'error');
-      return;
-    }
-    if (this.state.categories.includes(val)) {
-      this.showToast('Essa categoria já existe.', 'error');
-      return;
-    }
-    this.state.categories.push(val);
-    this.save();
-    document.getElementById('sheet-content').innerHTML = this.buildCategoryManagerContent();
-    this.render();
-    this.showToast('Categoria adicionada!', 'success');
+    if (!val) { this.showToast('Digite um nome.', 'error'); return; }
+    if (this.state.categories.includes(val)) { this.showToast('Categoria já existe.', 'error'); return; }
+    this.state.categories.push(val); this.save(); document.getElementById('sheet-content').innerHTML = this.buildCategoryManagerContent(); this.render(); this.showToast('Categoria adicionada!', 'success');
   },
-
-  editCategory(oldName) {
+  async editCategory(oldName) {
     const newName = prompt('Renomear categoria "' + oldName + '":', oldName);
-    if (newName === null) return;
-    const trimmed = newName.trim();
-    if (!trimmed) {
-      this.showToast('Nome não pode estar vazio.', 'error');
-      return;
-    }
-    if (trimmed === oldName) return;
-    if (this.state.categories.includes(trimmed)) {
-      this.showToast('Já existe uma categoria com esse nome.', 'error');
-      return;
-    }
-    const idx = this.state.categories.indexOf(oldName);
-    if (idx > -1) this.state.categories[idx] = trimmed;
+    if (newName === null) return; const trimmed = newName.trim(); if (!trimmed || trimmed === oldName || this.state.categories.includes(trimmed)) { this.showToast('Inválido ou existente.', 'error'); return; }
+    const idx = this.state.categories.indexOf(oldName); if (idx > -1) this.state.categories[idx] = trimmed;
     this.state.incomes.forEach(i => { if (i.category === oldName) i.category = trimmed; });
     this.state.expenses.forEach(e => { if (e.category === oldName) e.category = trimmed; });
     if (this.state.filterCategory === oldName) this.state.filterCategory = trimmed;
-    this.save();
-    document.getElementById('sheet-content').innerHTML = this.buildCategoryManagerContent();
-    this.render();
-    this.showToast('Categoria renomeada!', 'success');
+    this.save(); document.getElementById('sheet-content').innerHTML = this.buildCategoryManagerContent(); this.render(); this.showToast('Renomeada!', 'success');
   },
-
-  deleteCategory(name) {
+  async deleteCategory(name) {
     const usageInc = this.state.incomes.filter(i => i.category === name).length;
     const usageExp = this.state.expenses.filter(e => e.category === name).length;
     const total = usageInc + usageExp;
-
-    let msg = 'Excluir a categoria "' + name + '"?';
-    if (total > 0) {
-      msg += '\n\n⚠️ Existem ' + total + ' lançamento(s) usando esta categoria. Eles ficarão sem categoria.';
-    }
-    if (!confirm(msg)) return;
-
+    let message = `Excluir a categoria "${name}"?`;
+    if (total > 0) message += `\n\n⚠️ Existem ${total} lançamento(s) usando esta categoria.`;
+    if (!await this.showConfirm({ title: 'Excluir categoria?', message, type: 'danger', confirmText: 'Excluir' })) return;
     this.state.categories = this.state.categories.filter(c => c !== name);
     this.state.incomes.forEach(i => { if (i.category === name) i.category = ''; });
     this.state.expenses.forEach(e => { if (e.category === name) e.category = ''; });
     if (this.state.filterCategory === name) this.state.filterCategory = '';
-    this.save();
-    document.getElementById('sheet-content').innerHTML = this.buildCategoryManagerContent();
-    this.render();
-    this.showToast('Categoria excluída!', 'success');
+    this.save(); document.getElementById('sheet-content').innerHTML = this.buildCategoryManagerContent(); this.render(); this.showToast('Excluída!', 'success');
   },
 
   toggleInstallment(mode) {
-    const fields = document.getElementById('installment-fields');
-    if (!fields) return;
+    const fields = document.getElementById('installment-fields'); if (!fields) return;
     fields.style.display = mode === 'installment' ? 'block' : 'none';
-    document.querySelectorAll('#sheet-content .toggle-btn').forEach((btn, idx) => {
-      btn.classList.toggle('active', (mode === 'cash' && idx === 0) || (mode === 'installment' && idx === 1));
-    });
+    document.querySelectorAll('#sheet-content .toggle-btn').forEach((btn, idx) => btn.classList.toggle('active', (mode === 'cash' && idx === 0) || (mode === 'installment' && idx === 1)));
     if (mode === 'installment') this.updateEndDate();
   },
-
   updateEndDate() {
-    const start = document.getElementById('f-inst-start').value;
-    const count = parseInt(document.getElementById('f-inst-count').value) || 0;
-    const out = document.getElementById('f-end-date');
-    if (out && start && count > 0) {
-      out.textContent = 'Data final prevista: ' + Domain.fmtDate(Domain.addMonths(start, count - 1));
-    }
+    const start = document.getElementById('f-inst-start').value; const count = parseInt(document.getElementById('f-inst-count').value) || 0; const out = document.getElementById('f-end-date');
+    if (out && start && count > 0) out.textContent = 'Data final prevista: ' + Domain.fmtDate(Domain.addMonths(start, count - 1));
   },
 
   submitTx() {
-    const desc = document.getElementById('f-desc').value.trim();
-    const amount = parseFloat(document.getElementById('f-amount').value);
-    const category = document.getElementById('f-category').value;
-    const date = document.getElementById('f-date').value;
-    const isFixed = document.getElementById('f-fixed').checked;
-
-    if (!desc || !amount || amount <= 0 || !category || !date) {
-      this.showToast('Preencha todos os campos corretamente.', 'error');
-      return;
-    }
-
-    const { type, editing } = this.state.modal;
-    const list = type === 'income' ? this.state.incomes : this.state.expenses;
-
-    if (editing) {
-      const idx = list.findIndex(x => x.id === editing.id);
-      if (idx > -1) list.splice(idx, 1);
-      if (editing.installments && editing.installments.groupId) {
-        const gid = editing.installments.groupId;
-        this.state.expenses = this.state.expenses.filter(x => !(x.installments && x.installments.groupId === gid));
-      }
-    }
-
-    const isInstallment = type === 'expense' && document.getElementById('installment-fields')
-                          && document.getElementById('installment-fields').style.display === 'block';
-
+    const desc = document.getElementById('f-desc').value.trim(); const amount = parseFloat(document.getElementById('f-amount').value); const category = document.getElementById('f-category').value; const date = document.getElementById('f-date').value; const isFixed = document.getElementById('f-fixed').checked;
+    if (!desc || !amount || amount <= 0 || !category || !date) { this.showToast('Preencha todos os campos.', 'error'); return; }
+    const { type, editing } = this.state.modal; const list = type === 'income' ? this.state.incomes : this.state.expenses;
+    if (editing) { const idx = list.findIndex(x => x.id === editing.id); if (idx > -1) list.splice(idx, 1); }
+    const isInstallment = type === 'expense' && document.getElementById('installment-fields')?.style.display === 'block';
     if (isInstallment) {
-      const count = parseInt(document.getElementById('f-inst-count').value) || 2;
-      const start = document.getElementById('f-inst-start').value || date;
-      const groupId = Domain.uid();
-      const valuePerInstallment = Math.round((amount / count) * 100) / 100;
-      for (let i = 0; i < count; i++) {
-        this.state.expenses.push({
-          id: Domain.uid(),
-          description: desc + ' (' + (i + 1) + '/' + count + ')',
-          amount: valuePerInstallment,
-          category, isFixed: false,
-          installmentType: 'installment',
-          installmentsCount: count,
-          startDate: start,
-          installments: { total: count, current: i + 1, groupId },
-          date: Domain.addMonths(start, i),
-          createdAt: new Date().toISOString()
-        });
-      }
+      const count = parseInt(document.getElementById('f-inst-count').value) || 2; const start = document.getElementById('f-inst-start').value || date;
+      list.push({ id: editing ? editing.id : Domain.uid(), description: desc, totalAmount: amount, installmentValue: Math.round((amount / count) * 100) / 100, category, startDate: start, endDate: Domain.addMonths(start, count - 1), installmentsTotal: count, isFixed: false, installmentType: 'installment', createdAt: new Date().toISOString() });
     } else {
-      const item = {
-        id: editing ? editing.id : Domain.uid(),
-        description: desc, amount, category, date, isFixed,
-        type, createdAt: new Date().toISOString()
-      };
-      list.push(item);
+      list.push({ id: editing ? editing.id : Domain.uid(), description: desc, totalAmount: amount, installmentValue: amount, category, startDate: date, endDate: date, installmentsTotal: 1, isFixed, installmentType: 'cash', createdAt: new Date().toISOString() });
     }
-
-    this.save();
-    this.closeModal();
-    this.render();
-    this.showToast('Lançamento salvo!', 'success');
+    this.save(); this.closeModal(); this.render(); this.showToast('Salvo!', 'success');
   },
 
   submitFinancing() {
-    const name = document.getElementById('f-name').value.trim();
-    const totalValue = parseFloat(document.getElementById('f-total').value) || 0;
-    const monthlyPayment = parseFloat(document.getElementById('f-monthly').value) || 0;
-    const remainingMonths = parseInt(document.getElementById('f-remaining').value) || 0;
-    const paidValue = parseFloat(document.getElementById('f-paid').value) || 0;
-    const startDate = document.getElementById('f-start').value;
-
-    if (!name || !totalValue || !monthlyPayment) {
-      this.showToast('Preencha nome, valor total e parcela.', 'error');
-      return;
-    }
-
+    const name = document.getElementById('f-name').value.trim(); const totalValue = parseFloat(document.getElementById('f-total').value) || 0; const installmentsTotal = parseInt(document.getElementById('f-installments').value) || 0; const startDate = document.getElementById('f-start').value;
+    if (!name || !totalValue || totalValue <= 0 || !installmentsTotal || installmentsTotal <= 0 || !startDate) { this.showToast('Preencha corretamente.', 'error'); return; }
     const { editing } = this.state.modal;
-    const item = {
-      id: editing ? editing.id : Domain.uid(),
-      name, totalValue, monthlyPayment, remainingMonths, paidValue, startDate
-    };
-    if (editing) {
-      const idx = this.state.financings.findIndex(f => f.id === editing.id);
-      if (idx > -1) this.state.financings[idx] = item;
-    } else {
-      this.state.financings.push(item);
-    }
-    this.save();
-    this.closeModal();
-    this.render();
-    this.showToast('Financiamento salvo!', 'success');
+    const item = { id: editing ? editing.id : Domain.uid(), name, totalValue, installmentsTotal, installmentValue: Math.round((totalValue / installmentsTotal) * 100) / 100, startDate, createdAt: editing ? editing.createdAt : new Date().toISOString() };
+    if (editing) { const idx = this.state.financings.findIndex(f => f.id === editing.id); if (idx > -1) this.state.financings[idx] = item; } else this.state.financings.push(item);
+    this.save(); this.closeModal(); this.render(); this.showToast('Financiamento salvo!', 'success');
   },
 
   submitLoan() {
-    const description = document.getElementById('f-ldesc').value.trim();
-    const amount = parseFloat(document.getElementById('f-lamount').value) || 0;
-    const interestRate = parseFloat(document.getElementById('f-lrate').value) || 0;
-    const startDate = document.getElementById('f-lstart').value;
-
-    if (!description || !amount) {
-      this.showToast('Preencha descrição e valor.', 'error');
-      return;
-    }
-
+    const description = document.getElementById('f-ldesc').value.trim(); const totalAmount = parseFloat(document.getElementById('f-lamount').value) || 0; const installmentsTotal = parseInt(document.getElementById('f-linstallments').value) || 0; const startDate = document.getElementById('f-lstart').value;
+    if (!description || !totalAmount || totalAmount <= 0 || !installmentsTotal || installmentsTotal <= 0 || !startDate) { this.showToast('Preencha corretamente.', 'error'); return; }
+    const installmentValue = Math.round((totalAmount / installmentsTotal) * 100) / 100;
     const { editing } = this.state.modal;
-    const item = { id: editing ? editing.id : Domain.uid(), description, amount, interestRate, startDate };
-    if (editing) {
-      const idx = this.state.loans.findIndex(l => l.id === editing.id);
-      if (idx > -1) this.state.loans[idx] = item;
-    } else {
-      this.state.loans.push(item);
-    }
-    this.save();
-    this.closeModal();
-    this.render();
-    this.showToast('Empréstimo salvo!', 'success');
+    const item = { id: editing ? editing.id : Domain.uid(), description, totalAmount, installmentsTotal, installmentValue, startDate, createdAt: editing ? editing.createdAt : new Date().toISOString() };
+    if (editing) { const idx = this.state.loans.findIndex(l => l.id === editing.id); if (idx > -1) this.state.loans[idx] = item; } else this.state.loans.push(item);
+    this.save(); this.closeModal(); this.render(); this.showToast('Empréstimo salvo!', 'success');
   },
 
   editIncome(id) {
@@ -2725,226 +2344,77 @@ const App = {
     if (item) this.openModal('loan', item);
   },
 
-  deleteIncome(id) {
-    if (!confirm('Excluir esta receita?')) return;
+  async deleteIncome(id) {
+    if (!await this.showConfirm({ title: 'Excluir receita?', message: 'Esta ação não pode ser desfeita.', type: 'danger', confirmText: 'Excluir' })) return;
     this.state.incomes = this.state.incomes.filter(i => i.id !== id);
-    this.save(); this.render();
-    this.showToast('Receita excluída!', 'success');
+    this.save(); this.render(); this.showToast('Receita excluída!', 'success');
   },
-  deleteExpense(id) {
-    const item = this.state.expenses.find(e => e.id === id);
-    if (!item) return;
-    if (item.installments && item.installments.groupId) {
-      if (!confirm('Esta é uma parcela. Excluir TODAS as parcelas deste lançamento?')) return;
-      const gid = item.installments.groupId;
-      this.state.expenses = this.state.expenses.filter(x => !(x.installments && x.installments.groupId === gid));
-    } else {
-      if (!confirm('Excluir este gasto?')) return;
-      this.state.expenses = this.state.expenses.filter(e => e.id !== id);
-    }
-    this.save(); this.render();
-    this.showToast('Gasto excluído!', 'success');
+  async deleteExpense(id) {
+    if (!await this.showConfirm({ title: 'Excluir gasto?', message: 'Esta ação não pode ser desfeita.', type: 'danger', confirmText: 'Excluir' })) return;
+    this.state.expenses = this.state.expenses.filter(e => e.id !== id);
+    this.save(); this.render(); this.showToast('Gasto excluído!', 'success');
   },
-  deleteFinancing(id) {
-    if (!confirm('Excluir financiamento?')) return;
+  async deleteFinancing(id) {
+    if (!await this.showConfirm({ title: 'Excluir financiamento?', message: 'Esta ação não pode ser desfeita.', type: 'danger', confirmText: 'Excluir' })) return;
     this.state.financings = this.state.financings.filter(f => f.id !== id);
-    this.save(); this.render();
-    this.showToast('Financiamento excluído!', 'success');
+    this.save(); this.render(); this.showToast('Financiamento excluído!', 'success');
   },
-  deleteLoan(id) {
-    if (!confirm('Excluir empréstimo?')) return;
+  async deleteLoan(id) {
+    if (!await this.showConfirm({ title: 'Excluir empréstimo?', message: 'Esta ação não pode ser desfeita.', type: 'danger', confirmText: 'Excluir' })) return;
     this.state.loans = this.state.loans.filter(l => l.id !== id);
-    this.save(); this.render();
-    this.showToast('Empréstimo excluído!', 'success');
+    this.save(); this.render(); this.showToast('Empréstimo excluído!', 'success');
   },
 
   openSettings() { this.openModal('settings'); },
 
-  // ===== EXPORT DATA (MELHORADO) =====
   exportData() {
-    const dataToExport = {
-      _meta: {
-        app: 'FinApp',
-        version: '4',
-        exportedAt: new Date().toISOString(),
-        description: 'Backup completo do FinApp'
-      },
-      incomes: this.state.incomes,
-      expenses: this.state.expenses,
-      financings: this.state.financings,
-      loans: this.state.loans,
-      categories: this.state.categories
-    };
-
-    try {
-      const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'finapp-backup-' + Domain.today() + '.json';
-      a.click();
-      URL.revokeObjectURL(a.href);
-      this.showToast('Backup exportado com sucesso!', 'success');
-    } catch (err) {
-      console.error('Export error:', err);
-      this.showToast('Erro ao exportar dados.', 'error');
-    }
+    const blob = new Blob([JSON.stringify({ _meta: { app: 'FinApp', version: '4', exportedAt: new Date().toISOString() }, incomes: this.state.incomes, expenses: this.state.expenses, financings: this.state.financings, loans: this.state.loans, categories: this.state.categories }, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'finapp-backup-' + Domain.today() + '.json'; a.click(); URL.revokeObjectURL(a.href); this.showToast('Exportado!', 'success');
   },
 
-  // ===== TRIGGER IMPORT (abre seletor de arquivo) =====
-  triggerImport() {
-    const totalCurrent = this.state.incomes.length + this.state.expenses.length 
-                        + this.state.financings.length + this.state.loans.length;
-    
-    let msg = 'Selecione um arquivo JSON de backup para importar.';
-    if (totalCurrent > 0) {
-      msg += '\n\n⚠️ ATENÇÃO: Você já tem ' + totalCurrent + ' registro(s) no app. A importação irá SUBSTITUIR todos os dados atuais.\n\nRecomendamos fazer um backup antes de continuar.';
-      
-      const backupFirst = confirm(msg + '\n\nDeseja fazer um backup dos dados atuais ANTES de importar?');
-      if (backupFirst === null) return;
-      if (backupFirst) {
-        this.exportData();
-      }
-      
-      if (!confirm('Continuar com a importação? Isso substituirá todos os dados atuais.')) return;
-    } else {
-      if (!confirm(msg + '\n\nContinuar?')) return;
-    }
-    
-    // Resetar o input para permitir reimportar o mesmo arquivo
-    const input = document.getElementById('import-file-input');
-    input.value = '';
-    input.click();
+  async triggerImport() {
+    const totalCurrent = this.state.incomes.length + this.state.expenses.length + this.state.financings.length + this.state.loans.length;
+    let message = 'Selecione um JSON de backup para importar.';
+    if (totalCurrent > 0) { message = `⚠️ ATENÇÃO!\n\nVocê já tem ${totalCurrent} registro(s). A importação irá SUBSTITUIR todos os dados atuais.`; if (!await this.showConfirm({ title: 'Importar backup?', message, type: 'warning', confirmText: 'Selecionar arquivo' })) return; if (await this.showConfirm({ title: 'Fazer backup antes?', message: 'Deseja exportar seus dados atuais antes?', confirmText: 'Sim' })) this.exportData(); }
+    else { if (!await this.showConfirm({ title: 'Importar backup?', message, confirmText: 'Selecionar arquivo' })) return; }
+    const input = document.getElementById('import-file-input'); input.value = ''; input.click();
   },
 
-  // ===== HANDLE FILE IMPORT =====
   handleFileImport(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    if (!file.name.toLowerCase().endsWith('.json') && file.type !== 'application/json') {
-      this.showToast('Por favor, selecione um arquivo JSON válido.', 'error');
-      return;
-    }
-
-    // Verificar tamanho máximo (10MB)
-    const MAX_SIZE = 10 * 1024 * 1024;
-    if (file.size > MAX_SIZE) {
-      this.showToast('Arquivo muito grande. Máximo 10MB.', 'error');
-      return;
-    }
-
+    const file = event.target.files[0]; if (!file) return;
+    if (!file.name.toLowerCase().endsWith('.json') && file.type !== 'application/json') { this.showToast('Arquivo inválido.', 'error'); return; }
+    if (file.size > 10 * 1024 * 1024) { this.showToast('Arquivo grande demais.', 'error'); return; }
     const reader = new FileReader();
-    
     reader.onload = (e) => {
       try {
-        const content = e.target.result;
-        const data = JSON.parse(content);
-        
-        // Validar estrutura
-        if (!this.validateImportData(data)) {
-          this.showToast('Arquivo inválido. Estrutura de backup não reconhecida.', 'error');
-          return;
-        }
-
-        // Aplicar dados importados
-        this.state.incomes = Array.isArray(data.incomes) ? data.incomes : [];
-        this.state.expenses = Array.isArray(data.expenses) ? data.expenses : [];
-        this.state.financings = Array.isArray(data.financings) ? data.financings : [];
-        this.state.loans = Array.isArray(data.loans) ? data.loans : [];
-        this.state.categories = Array.isArray(data.categories) && data.categories.length 
-                                 ? data.categories 
-                                 : ['Alimentação', 'Transporte', 'Lazer', 'Moradia', 'Saúde', 'Educação', 'Assinaturas', 'Outros'];
-        
-        this.save();
-        this.closeModal();
-        this.render();
-        
-        const totalRecords = this.state.incomes.length + this.state.expenses.length 
-                            + this.state.financings.length + this.state.loans.length;
-        
-        this.showToast('Backup importado! ' + totalRecords + ' registros restaurados.', 'success');
-        
-      } catch (err) {
-        console.error('Import parse error:', err);
-        this.showToast('Erro ao ler arquivo. Verifique se é um JSON válido.', 'error');
-      }
+        const data = JSON.parse(e.target.result);
+        if (!this.validateImportData(data)) { this.showToast('Estrutura inválida.', 'error'); return; }
+        this.state.incomes = data.incomes; this.state.expenses = data.expenses || []; this.state.financings = data.financings || []; this.state.loans = data.loans || []; this.state.categories = data.categories || ['Alimentação', 'Transporte', 'Lazer', 'Moradia', 'Saúde', 'Educação', 'Assinaturas', 'Outros'];
+        this.migrateExpenses(); this.migrateFinancings(); this.migrateLoans();
+        this.save(); this.closeModal(); this.render();
+        this.showToast('Importado! ' + (this.state.incomes.length + this.state.expenses.length + this.state.financings.length + this.state.loans.length) + ' registros.', 'success');
+      } catch (err) { this.showToast('Erro ao ler arquivo.', 'error'); }
     };
-
-    reader.onerror = () => {
-      this.showToast('Erro ao ler o arquivo.', 'error');
-    };
-
     reader.readAsText(file);
   },
 
-  // ===== VALIDAR DADOS DE IMPORTAÇÃO =====
   validateImportData(data) {
     if (!data || typeof data !== 'object') return false;
-    
-    // Pelo menos um dos arrays principais deve existir
-    const hasIncomes = Array.isArray(data.incomes);
-    const hasExpenses = Array.isArray(data.expenses);
-    const hasFinancings = Array.isArray(data.financings);
-    const hasLoans = Array.isArray(data.loans);
-    
-    if (!hasIncomes && !hasExpenses && !hasFinancings && !hasLoans) return false;
-    
-    // Validar estrutura dos itens (amostragem - primeiros itens)
-    const validateArray = (arr, requiredFields = []) => {
-      if (!Array.isArray(arr)) return false;
-      if (arr.length === 0) return true;
-      const first = arr[0];
-      if (!first || typeof first !== 'object') return false;
-      for (const field of requiredFields) {
-        if (!(field in first)) return false;
-      }
-      return true;
-    };
-
-    if (hasIncomes && !validateArray(data.incomes, ['description', 'amount'])) return false;
-    if (hasExpenses && !validateArray(data.expenses, ['description', 'amount'])) return false;
-    if (hasFinancings && !validateArray(data.financings, ['name'])) return false;
-    if (hasLoans && !validateArray(data.loans, ['description', 'amount'])) return false;
-    
+    if (!Array.isArray(data.incomes)) return false;
+    if (!Array.isArray(data.expenses) && !Array.isArray(data.financings) && !Array.isArray(data.loans)) return false;
     return true;
   },
 
-  clearAll() {
-    if (!confirm('Isso apagará TODOS os dados. Continuar?')) return;
-    if (!confirm('Tem certeza mesmo? Essa ação é irreversível.\n\nRecomendamos fazer um backup antes.')) return;
-    
-    // Oferecer backup antes de apagar
-    const totalCurrent = this.state.incomes.length + this.state.expenses.length 
-                        + this.state.financings.length + this.state.loans.length;
-    
-    if (totalCurrent > 0) {
-      if (confirm('Deseja fazer um backup ANTES de apagar tudo?')) {
-        this.exportData();
-      }
-    }
-    
-    this.state.incomes = []; 
-    this.state.expenses = [];
-    this.state.financings = []; 
-    this.state.loans = [];
-    this.state.categories = ['Alimentação', 'Transporte', 'Lazer', 'Moradia', 'Saúde', 'Educação', 'Assinaturas', 'Outros'];
-    this.save(); 
-    this.closeModal(); 
-    this.render();
-    this.showToast('Todos os dados foram apagados.', 'success');
+  async clearAll() {
+    if (!await this.showConfirm({ title: 'Apagar todos os dados?', message: 'Esta ação é irreversível.', type: 'danger', confirmText: 'Sim, apagar' })) return;
+    const totalCurrent = this.state.incomes.length + this.state.expenses.length + this.state.financings.length + this.state.loans.length;
+    if (totalCurrent > 0) { if (await this.showConfirm({ title: 'Fazer backup antes?', message: 'Deseja exportar seus dados antes?', confirmText: 'Sim' })) this.exportData(); }
+    this.state.incomes = []; this.state.expenses = []; this.state.financings = []; this.state.loans = []; this.state.categories = ['Alimentação', 'Transporte', 'Lazer', 'Moradia', 'Saúde', 'Educação', 'Assinaturas', 'Outros'];
+    this.save(); this.closeModal(); this.render(); this.showToast('Dados apagados.', 'success');
   }
 };
 
-try {
-  App.init();
-} catch (err) {
-  console.error('Init error:', err);
-  document.body.innerHTML = '<div style="padding:40px; text-align:center; font-family:sans-serif;">'
-    + '<h2>⚠️ Erro ao inicializar</h2>'
-    + '<p style="color:#666; margin-top:10px;">' + err.message + '</p>'
-    + '<button onclick="localStorage.clear(); location.reload();" style="margin-top:20px; padding:12px 24px; background:#ef4444; color:white; border:none; border-radius:8px; cursor:pointer;">Resetar e Recarregar</button>'
-    + '</div>';
-}
+try { App.init(); } catch (err) { console.error('Init error:', err); document.body.innerHTML = '<div style="padding:40px; text-align:center; font-family:sans-serif;"><h2>⚠️ Erro ao inicializar</h2><p style="color:#666; margin-top:10px;">' + err.message + '</p><button onclick="localStorage.clear(); location.reload();" style="margin-top:20px; padding:12px 24px; background:#ef4444; color:white; border:none; border-radius:8px; cursor:pointer;">Resetar e Recarregar</button></div>'; }
 </script>
 </body>
 </html>
