@@ -1395,6 +1395,146 @@
   .home-result .result-value.positive { color: var(--success); }
   .home-result .result-value.negative { color: var(--danger); }
 
+  /* Dashboard Specific Enhancements */
+  .dash-main-card {
+    background: var(--card);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-light);
+    padding: 24px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .dash-balance-center {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .dash-balance-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+
+  .dash-balance-value {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin: 8px 0;
+  }
+  
+  .dash-balance-value.positive { color: var(--success); }
+  .dash-balance-value.negative { color: var(--danger); }
+
+  .dash-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .dash-sub-card {
+    background: var(--bg-subtle);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    transition: var(--transition);
+  }
+  
+  .dash-sub-card:hover { transform: translateY(-2px); }
+
+  .dash-sub-card.income { border-bottom: 3px solid var(--success); }
+  .dash-sub-card.expense { border-bottom: 3px solid var(--danger); }
+  .dash-sub-card.debt { border-bottom: 3px solid var(--purple); grid-column: span 2; }
+
+  .dash-sub-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 8px;
+  }
+  
+  .dash-sub-card.income .dash-sub-icon { background: var(--success-light); color: var(--success); }
+  .dash-sub-card.expense .dash-sub-icon { background: var(--danger-light); color: var(--danger); }
+  .dash-sub-card.debt .dash-sub-icon { background: var(--purple-light); color: var(--purple); }
+
+  .dash-sub-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .dash-sub-value {
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 4px;
+    color: var(--text);
+  }
+
+  /* Premium Distribution List */
+  #dash-summary {
+    background: var(--card);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+    overflow: hidden;
+  }
+  
+  #dash-summary .dist-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-light);
+    transition: var(--transition);
+  }
+  #dash-summary .dist-item:last-child { border-bottom: none; }
+  #dash-summary .dist-item:hover { background: var(--bg-subtle); }
+  
+  #dash-summary .dist-icon {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-lighter) 100%);
+    color: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgb(37 99 235 / 0.12);
+  }
+  #dash-summary .dist-icon svg { width: 20px; height: 20px; }
+  
+  #dash-summary .dist-info { flex: 1; min-width: 0; }
+  
+  #dash-summary .dist-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;
+  }
+  #dash-summary .dist-name {
+    font-size: 15px; font-weight: 600; color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  #dash-summary .dist-value {
+    font-size: 15px; font-weight: 700; color: var(--danger);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  
+  #dash-summary .dist-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px; border-radius: 20px;
+    background: var(--bg-subtle); color: var(--text-secondary);
+    font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
+  }
+
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
@@ -1529,53 +1669,44 @@
   </section>
 
   <section id="view-dashboard" class="view">
-    <h1 style="font-size:24px; font-weight:700; letter-spacing:-0.02em; margin-bottom:20px;">Dashboard</h1>
-    
-    <div class="form-group">
-      <label class="form-label">Período</label>
-      <input type="month" class="input" id="dash-month" onchange="App.renderDashboard()">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+      <h1 style="font-size:26px; font-weight:700; letter-spacing:-0.02em;">Dashboard</h1>
+      <div style="width:140px;">
+        <input type="month" class="input" id="dash-month" onchange="App.renderDashboard()" style="margin:0; font-size: 13px; padding: 10px 12px;">
+      </div>
     </div>
     
-    <div class="card" style="margin-bottom:20px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-        <span style="color:var(--text-secondary); font-size:14px; font-weight:600;">Resumo do Mês</span>
-        <span style="font-size:20px; font-weight:700; letter-spacing:-0.02em;" id="dash-balance">R$ 0,00</span>
+    <div class="dash-main-card">
+      <div class="dash-balance-center">
+        <div class="dash-balance-label">Saldo Líquido do Mês</div>
+        <div class="dash-balance-value" id="dash-balance">R$ 0,00</div>
       </div>
-      <div style="display:flex; justify-content:space-between; margin:10px 0; font-size:14px;">
-        <span style="display:flex; align-items:center; gap:6px; color:var(--text-secondary);">
-          <i data-lucide="trending-up" style="width: 16px; height: 16px; color:var(--success);"></i>
-          Receitas
-        </span>
-        <span style="font-weight:700; color:var(--success);" id="dash-income">R$ 0,00</span>
-      </div>
-      <div style="display:flex; justify-content:space-between; margin:10px 0; font-size:14px;">
-        <span style="display:flex; align-items:center; gap:6px; color:var(--text-secondary);">
-          <i data-lucide="trending-down" style="width: 16px; height: 16px; color:var(--danger);"></i>
-          Despesas
-        </span>
-        <span style="font-weight:700; color:var(--danger);" id="dash-expense">R$ 0,00</span>
-      </div>
-      <hr style="border:none; border-top:1px solid var(--border-light); margin:14px 0;">
-      <div style="display:flex; justify-content:space-between; margin:10px 0; font-size:14px;">
-        <span style="display:flex; align-items:center; gap:6px; color:var(--text-secondary);">
-          <i data-lucide="landmark" style="width: 16px; height: 16px; color:var(--purple);"></i>
-          Dívidas (parcelas do mês)
-        </span>
-        <span style="font-weight:700; color:var(--purple);" id="dash-debts">R$ 0,00</span>
+      <div class="dash-grid">
+        <div class="dash-sub-card income">
+          <div class="dash-sub-icon"><i data-lucide="trending-up"></i></div>
+          <div class="dash-sub-label">Receitas</div>
+          <div class="dash-sub-value" id="dash-income">R$ 0,00</div>
+        </div>
+        <div class="dash-sub-card expense">
+          <div class="dash-sub-icon"><i data-lucide="trending-down"></i></div>
+          <div class="dash-sub-label">Despesas</div>
+          <div class="dash-sub-value" id="dash-expense">R$ 0,00</div>
+        </div>
+        <div class="dash-sub-card debt">
+          <div class="dash-sub-icon"><i data-lucide="landmark"></i></div>
+          <div class="dash-sub-label">Dívidas (Parcelas do Mês)</div>
+          <div class="dash-sub-value" id="dash-debts">R$ 0,00</div>
+        </div>
       </div>
     </div>
 
-    <div class="section-title">Resumo por Categoria</div>
-    <div class="card" style="margin-bottom:20px;" id="dash-summary"></div>
+    <div class="section-title">Distribuição por Categoria</div>
+    <div class="card" style="margin-bottom:20px; padding:16px;" id="dash-summary"></div>
 
-    <div class="section-title">Gastos por Categoria</div>
+    <div class="section-title">Detalhamento de Gastos</div>
     <div id="dash-categories"></div>
 
-    <div class="section-title">
-      <span style="display:flex; align-items:center; gap:6px;">
-        Dívidas do Mês
-      </span>
-    </div>
+    <div class="section-title">Compromissos do Mês</div>
     <div id="dash-debts-detail"></div>
   </section>
 </main>
@@ -2342,6 +2473,7 @@ const App = {
     if (bal) {
       bal.textContent = Domain.fmt(balance);
       bal.style.color = balance >= 0 ? 'var(--success)' : 'var(--danger)';
+      bal.className = 'dash-balance-value ' + (balance >= 0 ? 'positive' : 'negative');
     }
     const dashIncome = document.getElementById('dash-income');
     const dashExpense = document.getElementById('dash-expense');
@@ -2359,10 +2491,25 @@ const App = {
       if (!catEntries.length && !monthlyDebts.length) summaryContainer.innerHTML = '<div class="empty" style="padding:24px;">Sem movimentação neste mês.</div>';
       else if (!catEntries.length) summaryContainer.innerHTML = '<div class="empty" style="padding:24px;">Sem despesas avulsas neste mês.</div>';
       else {
-        const maxTotal = Math.max(...catEntries.map(c => c.total));
         summaryContainer.innerHTML = catEntries.map(c => {
-          const pct = maxTotal > 0 ? (c.total / maxTotal * 100) : 0;
-          return `<div style="margin-bottom:16px;"><div class="dash-summary-row"><div class="cat-pill"><span class="dot"></span><span>${Domain.escapeHtml(c.category)}</span><span style="color:var(--text-secondary); font-size:12px; font-weight:500;">(${c.count})</span></div><span style="font-weight:700; color:var(--danger); font-size:14px;">${Domain.fmt(c.total)}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%; background:linear-gradient(90deg, var(--danger) 0%, #dc2626 100%);"></div></div></div>`;
+          const safeCat = Domain.escapeHtml(c.category);
+          const safeCatJS = safeCat.replace(/'/g, "\\'");
+          return `
+            <div class="dist-item">
+              <div class="dist-icon"><i data-lucide="tag"></i></div>
+              <div class="dist-info" style="flex: 1;">
+                <div class="dist-header">
+                  <span class="dist-name">${safeCat}</span>
+                  <span class="dist-value">${Domain.fmt(c.total)}</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; margin-top:4px;">
+                  <span class="dist-badge">${c.count} ${c.count === 1 ? 'item' : 'itens'}</span>
+                  <button class="btn-icon btn-primary" style="width:32px;height:32px;flex-shrink:0;" onclick="App.shareCategoryImage('${safeCatJS}')" title="Gerar recibo">
+                    <i data-lucide="share-2" style="width:16px;height:16px;"></i>
+                  </button>
+                </div>
+              </div>
+            </div>`;
         }).join('');
       }
     }
@@ -2384,6 +2531,138 @@ const App = {
       }
     }
     this.renderDashboardDebts(monthlyDebts);
+  },
+
+  shareCategoryImage(categoryName) {
+    const ym = document.getElementById('dash-month')?.value || Domain.currentMonth();
+    const exps = this.state.expenses.filter(e => e.category === categoryName && this.expenseInMonth(e, ym));
+    if (!exps.length) { this.showToast('Nenhum item encontrado.', 'error'); return; }
+
+    const items = exps.map(e => ({
+      desc: e.description || '',
+      amount: this.getInstallmentValueForMonth(e, ym)
+    }));
+
+    const total = items.reduce((s, i) => s + i.amount, 0);
+    const now = new Date();
+    const dateStr = `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+    const W = 800;
+    const lineHeight = 50;
+    const headerH = 200;
+    const itemsH = items.length * lineHeight + 60;
+    const footerH = 180;
+    const H = headerH + itemsH + footerH;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = W;
+    canvas.height = H;
+    const ctx = canvas.getContext('2d');
+
+    // Background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, W, H);
+
+    // Header bar
+    const gradient = ctx.createLinearGradient(0, 0, W, 0);
+    gradient.addColorStop(0, '#2563eb');
+    gradient.addColorStop(1, '#1d4ed8');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, W, 120);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 36px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('FinApp', W / 2, 52);
+
+    ctx.font = '600 18px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.8)';
+    ctx.fillText('Recibo de Gastos por Categoria', W / 2, 88);
+
+    // Category name
+    ctx.fillStyle = '#0f172a';
+    ctx.font = 'bold 28px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';
+    ctx.fillText(categoryName, W / 2, 160);
+
+    ctx.fillStyle = '#64748b';
+    ctx.font = '500 16px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';
+    ctx.fillText(Domain.fmtMonth(ym) + ' • ' + dateStr, W / 2, 188);
+
+    // Divider
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(40, 210);
+    ctx.lineTo(W - 40, 210);
+    ctx.stroke();
+
+    // Column headers
+    ctx.fillStyle = '#64748b';
+    ctx.font = 'bold 14px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('DESCRIÇÃO', 60, 250);
+    ctx.textAlign = 'right';
+    ctx.fillText('VALOR', W - 60, 250);
+
+    // Items
+    let y = 290;
+    ctx.textAlign = 'left';
+    items.forEach((item, idx) => {
+      if (idx % 2 === 0) {
+        ctx.fillStyle = '#f8fafc';
+        ctx.fillRect(20, y - 24, W - 40, lineHeight);
+      }
+      ctx.fillStyle = '#0f172a';
+      ctx.font = '600 20px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';
+      ctx.fillText(Domain.truncate(item.desc, 40), 60, y);
+      ctx.textAlign = 'right';
+      ctx.fillStyle = '#ef4444';
+      ctx.font = 'bold 20px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';
+      ctx.fillText(Domain.fmt(item.amount), W - 60, y);
+      ctx.textAlign = 'left';
+      y += lineHeight;
+    });
+
+    // Total divider
+    y += 10;
+    ctx.strokeStyle = '#ef4444';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(40, y);
+    ctx.lineTo(W - 40, y);
+    ctx.stroke();
+    y += 40;
+
+    // Total
+    ctx.fillStyle = '#0f172a';
+    ctx.font = 'bold 22px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('TOTAL A PAGAR', 60, y);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#ef4444';
+    ctx.font = 'bold 32px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';
+    ctx.fillText(Domain.fmt(total), W - 60, y);
+
+    // Footer
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '500 14px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Gerado por FinApp - Controle Financeiro Premium', W / 2, H - 50);
+    ctx.fillText(dateStr, W / 2, H - 25);
+
+    // Download
+    canvas.toBlob((blob) => {
+      if (!blob) { this.showToast('Erro ao gerar imagem.', 'error'); return; }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `recibo-${categoryName.toLowerCase().replace(/\s+/g, '-')}-${Domain.today()}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      this.showToast('Recibo gerado com sucesso!', 'success');
+    }, 'image/png');
   },
 
   renderDashboardDebts(monthlyDebts) {
