@@ -602,7 +602,6 @@
     min-width: 0;
   }
   
-  /* Ajustes específicos para inputs de data para não ultrapassar a tela */
   .input[type="date"],
   .input[type="month"],
   .input[type="time"],
@@ -615,7 +614,6 @@
     text-overflow: ellipsis;
   }
   
-  /* Fallback para o ícone do date picker em WebKit */
   .input[type="date"]::-webkit-calendar-picker-indicator,
   .input[type="month"]::-webkit-calendar-picker-indicator {
     position: absolute;
@@ -1269,6 +1267,134 @@
     grid-template-columns: 1fr;
   }
 
+  .home-summary-section { margin-bottom: 20px; }
+  
+  .home-summary-section .section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-light);
+  }
+  
+  .home-summary-section .section-header .section-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  
+  .home-summary-section .section-header .section-icon.green { background: var(--success-light); color: var(--success); }
+  .home-summary-section .section-header .section-icon.red { background: var(--danger-light); color: var(--danger); }
+  .home-summary-section .section-header .section-icon.blue { background: var(--primary-light); color: var(--primary); }
+  .home-summary-section .section-header .section-icon.purple { background: var(--purple-light); color: var(--purple); }
+  .home-summary-section .section-header .section-icon svg { width: 18px; height: 18px; }
+  
+  .home-summary-section .section-header .section-title-text {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    flex: 1;
+  }
+  
+  .home-summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+  }
+  
+  .home-summary-item .item-name {
+    font-size: 14px;
+    color: var(--text);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .home-summary-item .item-name .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  
+  .home-summary-item .item-name .dot.green { background: var(--success); }
+  .home-summary-item .item-name .dot.red { background: var(--danger); }
+  .home-summary-item .item-name .dot.blue { background: var(--primary); }
+  .home-summary-item .item-name .dot.purple { background: var(--purple); }
+  
+  .home-summary-item .item-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  
+  .home-summary-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0 0;
+    margin-top: 6px;
+    border-top: 1px dashed var(--border);
+  }
+  
+  .home-summary-total .total-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .home-summary-total .total-value {
+    font-size: 16px;
+    font-weight: 700;
+  }
+  
+  .home-summary-total .total-value.green { color: var(--success); }
+  .home-summary-total .total-value.red { color: var(--danger); }
+  .home-summary-total .total-value.blue { color: var(--primary); }
+  .home-summary-total .total-value.purple { color: var(--purple); }
+
+  .home-result {
+    background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+    border: 1px solid var(--success-light);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .home-result.negative {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border-color: var(--danger-light);
+  }
+  
+  .home-result .result-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+  
+  .home-result .result-value {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+  
+  .home-result .result-value.positive { color: var(--success); }
+  .home-result .result-value.negative { color: var(--danger); }
+
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
@@ -1293,8 +1419,8 @@
   <section id="view-home" class="view active">
     <div class="card card-hero">
       <div class="label">
-        <i data-lucide="trending-up" style="width: 14px; height: 14px;"></i>
-        Saldo Total
+        <i data-lucide="calendar" style="width: 14px; height: 14px;"></i>
+        Resumo do Mês
       </div>
       <div class="value" id="home-balance">R$ 0,00</div>
     </div>
@@ -1324,8 +1450,8 @@
         Gasto
       </button>
     </div>
-    <div class="section-title">Últimos Lançamentos</div>
-    <div class="list" id="home-recent"></div>
+    <div class="section-title">Detalhamento do Mês</div>
+    <div id="home-monthly-summary"></div>
   </section>
 
   <section id="view-receitas" class="view">
@@ -1602,9 +1728,13 @@ const App = {
     this.migrateFinancings();
     this.migrateLoans();
     
-    document.getElementById('dash-month').value = Domain.currentMonth();
-    document.getElementById('income-month-filter').value = Domain.currentMonth();
-    document.getElementById('expense-month-filter').value = Domain.currentMonth();
+    const dashMonth = document.getElementById('dash-month');
+    const incomeMonth = document.getElementById('income-month-filter');
+    const expenseMonth = document.getElementById('expense-month-filter');
+    
+    if (dashMonth) dashMonth.value = Domain.currentMonth();
+    if (incomeMonth) incomeMonth.value = Domain.currentMonth();
+    if (expenseMonth) expenseMonth.value = Domain.currentMonth();
     
     document.getElementById('import-file-input').addEventListener('change', (e) => {
       this.handleFileImport(e);
@@ -1787,42 +1917,131 @@ const App = {
     return { income, expense, balance: income - expense };
   },
 
+  computeMonthlyTotals() {
+    const month = Domain.currentMonth();
+    
+    const incomes = this.state.incomes.filter(i => {
+      if (i.isFixed) return true;
+      if (i.installmentType === 'installment' && i.installmentsTotal) {
+        for (let j = 0; j < i.installmentsTotal; j++) {
+          if (Domain.addMonths(i.startDate, j).startsWith(month)) return true;
+        }
+        return false;
+      }
+      return (i.date || i.startDate || '').startsWith(month);
+    });
+    
+    const expenses = this.state.expenses.filter(e => this.expenseInMonth(e, month));
+    
+    const monthlyDebts = this.getMonthlyDebts(month);
+    const financings = monthlyDebts.filter(d => d.type === 'financing');
+    const loans = monthlyDebts.filter(d => d.type === 'loan');
+    
+    const totalIncome = incomes.reduce((s, i) => s + (Number(i.totalAmount || i.amount) || 0), 0);
+    const totalExpense = expenses.reduce((s, e) => s + this.getInstallmentValueForMonth(e, month), 0);
+    const totalFinancings = financings.reduce((s, f) => s + (Number(f.amount) || 0), 0);
+    const totalLoans = loans.reduce((s, l) => s + (Number(l.amount) || 0), 0);
+    
+    return {
+      month,
+      totalIncome,
+      totalExpense,
+      totalFinancings,
+      totalLoans,
+      balance: totalIncome - totalExpense - totalFinancings - totalLoans,
+      incomes,
+      expenses,
+      financings,
+      loans,
+      byCategory: this._getExpensesByCategory(expenses, month)
+    };
+  },
+
+  _getExpensesByCategory(expenses, month) {
+    const byCat = {};
+    expenses.forEach(e => {
+      const cat = e.category || 'Sem categoria';
+      const val = this.getInstallmentValueForMonth(e, month);
+      if (!byCat[cat]) byCat[cat] = 0;
+      byCat[cat] += val;
+    });
+    return Object.entries(byCat)
+      .map(([category, total]) => ({ category, total }))
+      .sort((a, b) => b.total - a.total);
+  },
+
   renderHome() {
-    const t = this.computeTotals();
+    const t = this.computeMonthlyTotals();
+    
     const bal = document.getElementById('home-balance');
-    bal.textContent = Domain.fmt(t.balance);
-    bal.className = 'value ' + (t.balance >= 0 ? 'positive' : 'negative');
-    document.getElementById('home-income').textContent = Domain.fmt(t.income);
-    document.getElementById('home-expense').textContent = Domain.fmt(t.expense);
+    if (bal) {
+      bal.textContent = Domain.fmt(t.balance);
+      bal.className = 'value ' + (t.balance >= 0 ? 'positive' : 'negative');
+    }
+    const homeIncome = document.getElementById('home-income');
+    const homeExpense = document.getElementById('home-expense');
+    if (homeIncome) homeIncome.textContent = Domain.fmt(t.totalIncome);
+    if (homeExpense) homeExpense.textContent = Domain.fmt(t.totalExpense + t.totalFinancings + t.totalLoans);
 
-    const all = [
-      ...this.state.incomes.map(i => ({ ...i, kind: 'income' })),
-      ...this.state.expenses.map(e => ({ ...e, kind: 'expense' }))
-    ].sort((a, b) => (b.startDate || b.date || '').localeCompare(a.startDate || a.date || '')).slice(0, 5);
+    const container = document.getElementById('home-monthly-summary');
+    if (!container) return;
 
-    const container = document.getElementById('home-recent');
-    if (!all.length) { container.innerHTML = '<div class="empty">Nenhum lançamento ainda.</div>'; return; }
-    container.innerHTML = all.map(item => {
-      const amount = item.totalAmount || item.amount;
-      const date = item.startDate || item.date;
-      return `
-        <div class="list-item">
-          <div style="width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:${item.kind === 'income' ? 'var(--success-light)' : 'var(--danger-light)'};">
-            <i data-lucide="${item.kind === 'income' ? 'wallet' : 'shopping-cart'}" style="width: 20px; height: 20px; color: ${item.kind === 'income' ? 'var(--success)' : 'var(--danger)'}"></i>
-          </div>
-          <div class="info">
-            <div class="title">${Domain.escapeHtml(item.description)}</div>
-            <div class="subtitle">${Domain.escapeHtml(item.category || '')} • ${Domain.fmtDate(date)}</div>
-          </div>
-          <div class="amount ${item.kind === 'income' ? 'green' : 'red'}">
-            ${item.kind === 'income' ? '+' : '-'} ${Domain.fmt(amount)}
-          </div>
+    let html = '';
+
+    html += `<div class="home-summary-section">
+      <div class="section-header">
+        <div class="section-icon green"><i data-lucide="trending-up"></i></div>
+        <div class="section-title-text">Receitas</div>
+      </div>
+      ${t.incomes.map(i => `<div class="home-summary-item"><div class="item-name"><span class="dot green"></span>${Domain.escapeHtml(i.description)}</div><div class="item-value" style="color:var(--success)">${Domain.fmt(i.totalAmount || i.amount)}</div></div>`).join('')}
+      <div class="home-summary-total"><div class="total-label">Total Receitas</div><div class="total-value green">${Domain.fmt(t.totalIncome)}</div></div>
+    </div>`;
+
+    if (t.byCategory.length > 0) {
+      html += `<div class="home-summary-section">
+        <div class="section-header">
+          <div class="section-icon red"><i data-lucide="shopping-cart"></i></div>
+          <div class="section-title-text">Gastos por Categoria</div>
         </div>
-      `;
-    }).join('');
+        ${t.byCategory.map(c => `<div class="home-summary-item"><div class="item-name"><span class="dot red"></span>${Domain.escapeHtml(c.category)}</div><div class="item-value" style="color:var(--danger)">${Domain.fmt(c.total)}</div></div>`).join('')}
+        <div class="home-summary-total"><div class="total-label">Total Gastos</div><div class="total-value red">${Domain.fmt(t.totalExpense)}</div></div>
+      </div>`;
+    }
+
+    if (t.financings.length > 0) {
+      html += `<div class="home-summary-section">
+        <div class="section-header">
+          <div class="section-icon blue"><i data-lucide="credit-card"></i></div>
+          <div class="section-title-text">Financiamentos</div>
+        </div>
+        ${t.financings.map(f => `<div class="home-summary-item"><div class="item-name"><span class="dot blue"></span>${Domain.escapeHtml(f.description)} <span style="font-size:11px;color:var(--text-secondary);font-weight:400;">(${f.meta})</span></div><div class="item-value" style="color:var(--primary)">${Domain.fmt(f.amount)}</div></div>`).join('')}
+        <div class="home-summary-total"><div class="total-label">Total Financiamentos</div><div class="total-value blue">${Domain.fmt(t.totalFinancings)}</div></div>
+      </div>`;
+    }
+
+    if (t.loans.length > 0) {
+      html += `<div class="home-summary-section">
+        <div class="section-header">
+          <div class="section-icon purple"><i data-lucide="landmark"></i></div>
+          <div class="section-title-text">Empréstimos</div>
+        </div>
+        ${t.loans.map(l => `<div class="home-summary-item"><div class="item-name"><span class="dot purple"></span>${Domain.escapeHtml(l.description)} <span style="font-size:11px;color:var(--text-secondary);font-weight:400;">(${l.meta})</span></div><div class="item-value" style="color:var(--purple)">${Domain.fmt(l.amount)}</div></div>`).join('')}
+        <div class="home-summary-total"><div class="total-label">Total Empréstimos</div><div class="total-value purple">${Domain.fmt(t.totalLoans)}</div></div>
+      </div>`;
+    }
+
+    const resultClass = t.balance >= 0 ? '' : 'negative';
+    const balanceClass = t.balance >= 0 ? 'positive' : 'negative';
+    html += `<div class="home-result ${resultClass}">
+      <div class="result-label">Resultado do Mês</div>
+      <div class="result-value ${balanceClass}">${Domain.fmt(t.balance)}</div>
+    </div>`;
+
+    container.innerHTML = html;
   },
 
   getPaidInstallments(expense, referenceMonth) {
+    if (expense.isFixed) return 1;
     if (expense.installmentType !== 'installment' || !expense.installmentsTotal) return 1;
     const refMonth = referenceMonth || Domain.currentMonth();
     const monthsSinceStart = Domain.diffMonths(expense.startDate, refMonth) + 1;
@@ -1830,13 +2049,19 @@ const App = {
   },
 
   getInstallmentValueForMonth(expense, monthFilter) {
-    if (expense.installmentType !== 'installment' || !expense.installmentsTotal) return (expense.date || '').startsWith(monthFilter) ? (expense.totalAmount || expense.amount) : 0;
+    if (expense.isFixed) return Number(expense.totalAmount || expense.amount) || 0;
+    if (expense.installmentType !== 'installment' || !expense.installmentsTotal) {
+      return (expense.startDate || expense.date || '').startsWith(monthFilter) ? (expense.totalAmount || expense.amount) : 0;
+    }
     for (let i = 0; i < expense.installmentsTotal; i++) if (Domain.addMonths(expense.startDate, i).startsWith(monthFilter)) return expense.installmentValue;
     return 0;
   },
 
   expenseInMonth(expense, monthFilter) {
-    if (expense.installmentType !== 'installment' || !expense.installmentsTotal) return (expense.date || '').startsWith(monthFilter);
+    if (expense.isFixed) return true;
+    if (expense.installmentType !== 'installment' || !expense.installmentsTotal) {
+      return (expense.startDate || expense.date || '').startsWith(monthFilter);
+    }
     for (let i = 0; i < expense.installmentsTotal; i++) if (Domain.addMonths(expense.startDate, i).startsWith(monthFilter)) return true;
     return false;
   },
@@ -1850,10 +2075,12 @@ const App = {
   getDebtCurrentInstallment(debt) { const paid = this.getDebtPaidInstallments(debt); return paid >= debt.installmentsTotal ? debt.installmentsTotal : Math.min(paid + 1, debt.installmentsTotal || 0); },
 
   renderIncomes() {
-    const monthFilter = document.getElementById('income-month-filter').value || Domain.currentMonth();
+    const monthFilterEl = document.getElementById('income-month-filter');
+    const monthFilter = monthFilterEl?.value || Domain.currentMonth();
     this.state.incomeMonthFilter = monthFilter;
     
     let list = this.state.incomes.filter(i => {
+      if (i.isFixed) return true;
       if (i.installmentType === 'installment' && i.installmentsTotal) {
         for (let j = 0; j < i.installmentsTotal; j++) {
           const installmentDate = Domain.addMonths(i.startDate, j);
@@ -1864,18 +2091,20 @@ const App = {
       return (i.date || i.startDate || '').startsWith(monthFilter);
     });
     
-    if (document.getElementById('filter-fixed-income').checked) list = list.filter(i => i.isFixed);
+    const filterFixedEl = document.getElementById('filter-fixed-income');
+    if (filterFixedEl?.checked) list = list.filter(i => i.isFixed);
     list.sort((a, b) => (b.date || b.startDate || '').localeCompare(a.date || a.startDate || ''));
 
     const container = document.getElementById('incomes-list');
+    if (!container) return;
     if (!list.length) { container.innerHTML = '<div class="empty">Nenhuma receita cadastrada para este período.</div>'; return; }
     container.innerHTML = list.map(i => {
       const amount = i.totalAmount || i.amount;
       const date = i.startDate || i.date;
       const paid = this.getPaidInstallments(i, monthFilter);
-      
+      const perInstallment = i.installmentValue || (i.installmentsTotal > 0 ? amount / i.installmentsTotal : amount);
       const meta = i.installmentType === 'installment' && i.installmentsTotal > 1
-        ? `${paid}/${i.installmentsTotal} pagas • ${Domain.fmt(i.installmentValue || amount / i.installmentsTotal)}/parcela`
+        ? `${paid}/${i.installmentsTotal} pagas • ${Domain.fmt(perInstallment)}/parcela`
         : 'À vista';
       
       return `
@@ -1902,7 +2131,8 @@ const App = {
   },
 
   renderExpenseCategories() {
-    const monthFilter = document.getElementById('expense-month-filter').value || Domain.currentMonth();
+    const monthFilterEl = document.getElementById('expense-month-filter');
+    const monthFilter = monthFilterEl?.value || Domain.currentMonth();
     this.state.expenseMonthFilter = monthFilter;
     
     const byCategory = {};
@@ -1917,6 +2147,7 @@ const App = {
     });
     
     const container = document.getElementById('expense-categories');
+    if (!container) return;
     const categories = Object.entries(byCategory).sort((a, b) => b[1].total - a[1].total);
     if (!categories.length) { container.innerHTML = '<div class="empty">Nenhum gasto neste período.</div>'; return; }
     
@@ -1925,10 +2156,11 @@ const App = {
       const itemsHtml = data.items.map(e => {
         const paid = this.getPaidInstallments(e, monthFilter);
         const amount = e.visibleAmount || e.totalAmount || e.amount;
+        const fixedBadge = e.isFixed ? ' <span class="badge blue" style="margin-left:4px;"><i data-lucide="repeat" style="width:10px;height:10px;"></i> Fixo</span>' : '';
         const meta = e.installmentType === 'installment' && e.installmentsTotal > 1 ? `${paid}/${e.installmentsTotal} pagas • ${Domain.fmt(e.installmentValue)}/parcela` : 'À vista';
         return `
           <div class="category-item-row">
-            <div style="flex:1; min-width:0;"><div class="item-desc">${Domain.escapeHtml(e.description)}</div><div class="item-meta">${Domain.escapeHtml(meta)}</div></div>
+            <div style="flex:1; min-width:0;"><div class="item-desc">${Domain.escapeHtml(e.description)}${fixedBadge}</div><div class="item-meta">${Domain.escapeHtml(meta)}</div></div>
             <div class="item-amount">${Domain.fmt(amount)}</div>
             <div class="list-actions"><button class="icon-action" onclick="App.editExpense('${e.id}')"><i data-lucide="pencil"></i></button><button class="icon-action danger" onclick="App.deleteExpense('${e.id}')"><i data-lucide="trash-2"></i></button></div>
           </div>
@@ -1952,10 +2184,13 @@ const App = {
     this.renderExpenseCategories();
     
     const cats = ['Todas', ...this.state.categories];
-    document.getElementById('expense-tabs').innerHTML = cats.map(c => {
-      const val = c === 'Todas' ? '' : c;
-      return `<button class="tab ${this.state.filterCategory === val ? 'active' : ''}" onclick="App.setFilterCategory('${Domain.escapeHtml(val)}')">${Domain.escapeHtml(c)}</button>`;
-    }).join('');
+    const tabsEl = document.getElementById('expense-tabs');
+    if (tabsEl) {
+      tabsEl.innerHTML = cats.map(c => {
+        const val = c === 'Todas' ? '' : c;
+        return `<button class="tab ${this.state.filterCategory === val ? 'active' : ''}" onclick="App.setFilterCategory('${Domain.escapeHtml(val).replace(/'/g, "\\'")}')">${Domain.escapeHtml(c)}</button>`;
+      }).join('');
+    }
 
     const monthFilter = this.state.expenseMonthFilter;
     let list = this.state.expenses.filter(e => this.expenseInMonth(e, monthFilter));
@@ -1963,17 +2198,19 @@ const App = {
     list.sort((a, b) => (b.startDate || b.date || '').localeCompare(a.startDate || a.date || ''));
 
     const container = document.getElementById('expenses-list');
+    if (!container) return;
     if (!list.length) { container.innerHTML = '<div class="empty">Nenhum gasto cadastrado para este período.</div>'; return; }
     container.innerHTML = list.map(e => {
       const paid = this.getPaidInstallments(e, monthFilter);
       const amount = e.totalAmount || e.amount;
+      const fixedBadge = e.isFixed ? ' <span class="badge blue"><i data-lucide="repeat" style="width:10px;height:10px;"></i> Fixo</span>' : '';
       const metaParts = [];
       if (e.installmentType === 'installment' && e.installmentsTotal > 1) { metaParts.push(`${paid}/${e.installmentsTotal} pagas`); metaParts.push(`${Domain.fmt(e.installmentValue)}/parcela`); }
       else metaParts.push('À vista');
       metaParts.push(Domain.fmtDate(e.startDate || e.date));
       return `
         <div class="list-item">
-          <div class="info"><div class="title">${Domain.escapeHtml(e.description)}</div><div class="subtitle">${metaParts.join(' • ')}</div></div>
+          <div class="info"><div class="title">${Domain.escapeHtml(e.description)}${fixedBadge}</div><div class="subtitle">${metaParts.join(' • ')}</div></div>
           <div class="amount red">${Domain.fmt(amount)}</div>
           <div class="list-actions"><button class="icon-action" onclick="App.editExpense('${e.id}')"><i data-lucide="pencil"></i></button><button class="icon-action danger" onclick="App.deleteExpense('${e.id}')"><i data-lucide="trash-2"></i></button></div>
         </div>
@@ -1985,6 +2222,7 @@ const App = {
 
   renderFinancings() {
     const container = document.getElementById('financings-list');
+    if (!container) return;
     if (!this.state.financings.length) { container.innerHTML = '<div class="empty">Nenhum financiamento.</div>'; return; }
     container.innerHTML = this.state.financings.map(f => {
       const totalValue = Number(f.totalValue) || 0;
@@ -2019,6 +2257,7 @@ const App = {
 
   renderLoans() {
     const container = document.getElementById('loans-list');
+    if (!container) return;
     if (!this.state.loans.length) { container.innerHTML = '<div class="empty">Nenhum empréstimo.</div>'; return; }
     container.innerHTML = this.state.loans.map(l => {
       const totalAmount = Number(l.totalAmount || l.amount) || 0;
@@ -2079,10 +2318,12 @@ const App = {
   },
 
   renderDashboard() {
-    const ym = document.getElementById('dash-month').value;
+    const dashMonthEl = document.getElementById('dash-month');
+    const ym = dashMonthEl?.value;
     if (!ym) return;
     
     const incs = this.state.incomes.filter(i => {
+      if (i.isFixed) return true;
       if (i.installmentType === 'installment' && i.installmentsTotal) {
         for (let j = 0; j < i.installmentsTotal; j++) if (Domain.addMonths(i.startDate, j).startsWith(ym)) return true;
         return false;
@@ -2098,63 +2339,86 @@ const App = {
     const balance = income - expense - debts;
 
     const bal = document.getElementById('dash-balance');
-    bal.textContent = Domain.fmt(balance);
-    bal.style.color = balance >= 0 ? 'var(--success)' : 'var(--danger)';
-    document.getElementById('dash-income').textContent = Domain.fmt(income);
-    document.getElementById('dash-expense').textContent = Domain.fmt(expense);
-    document.getElementById('dash-debts').textContent = Domain.fmt(debts);
+    if (bal) {
+      bal.textContent = Domain.fmt(balance);
+      bal.style.color = balance >= 0 ? 'var(--success)' : 'var(--danger)';
+    }
+    const dashIncome = document.getElementById('dash-income');
+    const dashExpense = document.getElementById('dash-expense');
+    const dashDebts = document.getElementById('dash-debts');
+    if (dashIncome) dashIncome.textContent = Domain.fmt(income);
+    if (dashExpense) dashExpense.textContent = Domain.fmt(expense);
+    if (dashDebts) dashDebts.textContent = Domain.fmt(debts);
 
     const byCat = {};
     exps.forEach(e => { const cat = e.category || 'Sem categoria'; if (!byCat[cat]) byCat[cat] = []; byCat[cat].push(e); });
     const catEntries = Object.entries(byCat).map(([cat, items]) => ({ category: cat, items: items.sort((a, b) => (a.startDate || a.date || '').localeCompare(b.startDate || b.date || '')), total: items.reduce((s, i) => s + this.getInstallmentValueForMonth(i, ym), 0), count: items.length })).sort((a, b) => b.total - a.total);
 
     const summaryContainer = document.getElementById('dash-summary');
-    if (!catEntries.length && !monthlyDebts.length) summaryContainer.innerHTML = '<div class="empty" style="padding:24px;">Sem movimentação neste mês.</div>';
-    else if (!catEntries.length) summaryContainer.innerHTML = '<div class="empty" style="padding:24px;">Sem despesas avulsas neste mês.</div>';
-    else {
-      const maxTotal = Math.max(...catEntries.map(c => c.total));
-      summaryContainer.innerHTML = catEntries.map(c => {
-        const pct = maxTotal > 0 ? (c.total / maxTotal * 100) : 0;
-        return `<div style="margin-bottom:16px;"><div class="dash-summary-row"><div class="cat-pill"><span class="dot"></span><span>${Domain.escapeHtml(c.category)}</span><span style="color:var(--text-secondary); font-size:12px; font-weight:500;">(${c.count})</span></div><span style="font-weight:700; color:var(--danger); font-size:14px;">${Domain.fmt(c.total)}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%; background:linear-gradient(90deg, var(--danger) 0%, #dc2626 100%);"></div></div></div>`;
-      }).join('');
+    if (summaryContainer) {
+      if (!catEntries.length && !monthlyDebts.length) summaryContainer.innerHTML = '<div class="empty" style="padding:24px;">Sem movimentação neste mês.</div>';
+      else if (!catEntries.length) summaryContainer.innerHTML = '<div class="empty" style="padding:24px;">Sem despesas avulsas neste mês.</div>';
+      else {
+        const maxTotal = Math.max(...catEntries.map(c => c.total));
+        summaryContainer.innerHTML = catEntries.map(c => {
+          const pct = maxTotal > 0 ? (c.total / maxTotal * 100) : 0;
+          return `<div style="margin-bottom:16px;"><div class="dash-summary-row"><div class="cat-pill"><span class="dot"></span><span>${Domain.escapeHtml(c.category)}</span><span style="color:var(--text-secondary); font-size:12px; font-weight:500;">(${c.count})</span></div><span style="font-weight:700; color:var(--danger); font-size:14px;">${Domain.fmt(c.total)}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%; background:linear-gradient(90deg, var(--danger) 0%, #dc2626 100%);"></div></div></div>`;
+        }).join('');
+      }
     }
 
     const categoriesContainer = document.getElementById('dash-categories');
-    if (!catEntries.length) categoriesContainer.innerHTML = '<div class="empty">Nenhum gasto avulso neste mês.</div>';
-    else {
-      categoriesContainer.innerHTML = catEntries.map(c => {
-        const safeCat = Domain.escapeHtml(c.category).replace(/'/g, "\\'");
-        const itemsHtml = c.items.map(e => {
-          const paid = this.getPaidInstallments(e, ym);
-          const meta = [Domain.fmtDate(e.startDate || e.date), e.installmentType === 'installment' && e.installmentsTotal > 1 ? `${paid}/${e.installmentsTotal} pagas • ${Domain.fmt(e.installmentValue)}/parcela` : 'À vista'].filter(Boolean).join(' • ');
-          return `<div class="category-item-row"><div style="flex:1; min-width:0;"><div class="item-desc">${Domain.escapeHtml(e.description)}</div><div class="item-meta">${Domain.escapeHtml(meta)}</div></div><div class="item-amount">${Domain.fmt(this.getInstallmentValueForMonth(e, ym))}</div></div>`;
+    if (categoriesContainer) {
+      if (!catEntries.length) categoriesContainer.innerHTML = '<div class="empty">Nenhum gasto avulso neste mês.</div>';
+      else {
+        categoriesContainer.innerHTML = catEntries.map(c => {
+          const safeCat = Domain.escapeHtml(c.category).replace(/'/g, "\\'");
+          const itemsHtml = c.items.map(e => {
+            const paid = this.getPaidInstallments(e, ym);
+            const fixedBadge = e.isFixed ? ' <span class="badge blue" style="margin-left:4px;"><i data-lucide="repeat" style="width:10px;height:10px;"></i> Fixo</span>' : '';
+            const meta = [Domain.fmtDate(e.startDate || e.date), e.installmentType === 'installment' && e.installmentsTotal > 1 ? `${paid}/${e.installmentsTotal} pagas • ${Domain.fmt(e.installmentValue)}/parcela` : 'À vista'].filter(Boolean).join(' • ');
+            return `<div class="category-item-row"><div style="flex:1; min-width:0;"><div class="item-desc">${Domain.escapeHtml(e.description)}${fixedBadge}</div><div class="item-meta">${Domain.escapeHtml(meta)}</div></div><div class="item-amount">${Domain.fmt(this.getInstallmentValueForMonth(e, ym))}</div></div>`;
+          }).join('');
+          return `<div class="category-block"><div class="category-header"><div class="category-header-left"><div class="cat-title">${Domain.escapeHtml(c.category)}</div><div class="cat-count">${c.count} ${c.count === 1 ? 'item' : 'itens'}</div></div><div class="category-total">${Domain.fmt(c.total)}</div></div><div class="category-items">${itemsHtml}</div></div>`;
         }).join('');
-        return `<div class="category-block"><div class="category-header"><div class="category-header-left"><div class="cat-title">${Domain.escapeHtml(c.category)}</div><div class="cat-count">${c.count} ${c.count === 1 ? 'item' : 'itens'}</div></div><div class="category-total">${Domain.fmt(c.total)}</div><button class="share-btn" onclick="App.shareCategory('${safeCat}')"><i data-lucide="share-2"></i></button></div><div class="category-items">${itemsHtml}</div></div>`;
-      }).join('');
+      }
     }
     this.renderDashboardDebts(monthlyDebts);
   },
 
   renderDashboardDebts(monthlyDebts) {
     const container = document.getElementById('dash-debts-detail');
+    if (!container) return;
     if (!monthlyDebts.length) { container.innerHTML = '<div class="empty">Nenhuma dívida ativa neste mês.</div>'; return; }
     const financings = monthlyDebts.filter(d => d.type === 'financing');
     const loans = monthlyDebts.filter(d => d.type === 'loan');
     const totalDebts = monthlyDebts.reduce((s, d) => s + (Number(d.amount) || 0), 0);
     const itemsHtml = monthlyDebts.map(d => `<div class="category-item-row"><div style="flex:1; min-width:0; display:flex; align-items:center; gap:12px;"><div style="width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:${d.type === 'financing' ? 'var(--primary-light)' : 'var(--purple-light)'}; flex-shrink:0;"><i data-lucide="${d.icon}" style="width: 18px; height: 18px; color: ${d.type === 'financing' ? 'var(--primary)' : 'var(--purple)'}"></i></div><div style="min-width:0; flex:1;"><div class="item-desc">${Domain.escapeHtml(d.description)}</div><div class="item-meta">${Domain.escapeHtml(d.meta)}</div></div></div><div class="item-amount purple">${Domain.fmt(d.amount)}</div></div>`).join('');
-    container.innerHTML = `<div class="category-block"><div class="category-header" style="background: linear-gradient(135deg, var(--purple-light) 0%, #ffffff 100%);"><div class="category-header-left"><div class="cat-title"><i data-lucide="landmark" style="width: 18px; height: 18px; color: var(--purple);"></i> Dívidas Ativas</div><div class="cat-count">${financings.length} ${financings.length === 1 ? 'financiamento' : 'financiamentos'} • ${loans.length} ${loans.length === 1 ? 'empréstimo' : 'empréstimos'}</div></div><div class="category-total purple">${Domain.fmt(totalDebts)}</div><button class="share-btn purple" onclick="App.shareDebts()"><i data-lucide="share-2"></i></button></div><div class="category-items">${itemsHtml}</div></div>`;
+    container.innerHTML = `<div class="category-block"><div class="category-header" style="background: linear-gradient(135deg, var(--purple-light) 0%, #ffffff 100%);"><div class="category-header-left"><div class="cat-title"><i data-lucide="landmark" style="width: 18px; height: 18px; color: var(--purple);"></i> Dívidas Ativas</div><div class="cat-count">${financings.length} ${financings.length === 1 ? 'financiamento' : 'financiamentos'} • ${loans.length} ${loans.length === 1 ? 'empréstimo' : 'empréstimos'}</div></div><div class="category-total purple">${Domain.fmt(totalDebts)}</div></div><div class="category-items">${itemsHtml}</div></div>`;
   },
 
   openModal(type, editing = null, prefillCategory = null) {
     this.state.modal = { type, editing, prefillCategory };
     const sheet = document.getElementById('sheet');
     const backdrop = document.getElementById('sheet-backdrop');
-    document.getElementById('sheet-title').textContent = this.getModalTitle(type, editing);
-    document.getElementById('sheet-content').innerHTML = this.buildForm(type, editing, prefillCategory);
-    requestAnimationFrame(() => { sheet.classList.add('open'); backdrop.classList.add('open'); if (window.lucide) lucide.createIcons(); });
+    const sheetTitle = document.getElementById('sheet-title');
+    const sheetContent = document.getElementById('sheet-content');
+    if (sheetTitle) sheetTitle.textContent = this.getModalTitle(type, editing);
+    if (sheetContent) sheetContent.innerHTML = this.buildForm(type, editing, prefillCategory);
+    requestAnimationFrame(() => { 
+      if (sheet) sheet.classList.add('open'); 
+      if (backdrop) backdrop.classList.add('open'); 
+      if (window.lucide) lucide.createIcons(); 
+    });
   },
 
-  closeModal() { document.getElementById('sheet').classList.remove('open'); document.getElementById('sheet-backdrop').classList.remove('open'); this.state.modal = { type: null, editing: null, prefillCategory: null }; },
+  closeModal() { 
+    const sheet = document.getElementById('sheet');
+    const backdrop = document.getElementById('sheet-backdrop');
+    if (sheet) sheet.classList.remove('open'); 
+    if (backdrop) backdrop.classList.remove('open'); 
+    this.state.modal = { type: null, editing: null, prefillCategory: null }; 
+  },
 
   getModalTitle(type, editing) {
     const titles = { income: editing ? 'Editar Receita' : 'Nova Receita', expense: editing ? 'Editar Gasto' : 'Novo Gasto', financing: editing ? 'Editar Financiamento' : 'Novo Financiamento', loan: editing ? 'Editar Empréstimo' : 'Novo Empréstimo', settings: 'Configurações', categories: 'Gerenciar Categorias' };
@@ -2170,7 +2434,7 @@ const App = {
       return `
         <div class="form-group"><label class="form-label">Descrição</label><input class="input" id="f-desc" value="${Domain.escapeHtml(e.description || '')}" placeholder="Ex: Salário, Mercado..."></div>
         <div class="form-group"><label class="form-label">Valor Total (R$)</label><input class="input" id="f-amount" type="number" step="0.01" min="0.01" value="${e.totalAmount || e.amount || ''}" placeholder="0,00"></div>
-        <div class="form-group"><label class="form-label">Categoria</label><select class="select" id="f-category"><option value="">Selecione...</option>${this.state.categories.map(c => `<option value="${Domain.escapeHtml(c)}" ${c === categoryValue ? 'selected' : ''}>${Domain.escapeHtml(c)}</option>`).join('')}</select></div>
+        ${isExpense ? `<div class="form-group"><label class="form-label">Categoria</label><select class="select" id="f-category"><option value="">Selecione...</option>${this.state.categories.map(c => `<option value="${Domain.escapeHtml(c)}" ${c === categoryValue ? 'selected' : ''}>${Domain.escapeHtml(c)}</option>`).join('')}</select></div>` : ''}
         <div class="form-group"><label class="form-label">Data de Início</label><input class="input" id="f-date" type="date" value="${e.startDate || e.date || today}"></div>
         <label class="checkbox-row"><input type="checkbox" id="f-fixed" ${e.isFixed ? 'checked' : ''}><span>Lançamento fixo/mensal</span></label>
         ${isExpense ? `
@@ -2225,14 +2489,14 @@ const App = {
   },
 
   updateFinancingInstallment() {
-    const total = parseFloat(document.getElementById('f-total').value) || 0;
-    const count = parseInt(document.getElementById('f-installments').value) || 1;
+    const total = parseFloat(document.getElementById('f-total')?.value) || 0;
+    const count = parseInt(document.getElementById('f-installments')?.value) || 1;
     const val = count > 0 ? total / count : 0;
     const el = document.getElementById('f-installment-value'); if (el) el.textContent = Domain.fmt(val);
   },
   updateLoanInstallment() {
-    const total = parseFloat(document.getElementById('f-lamount').value) || 0;
-    const count = parseInt(document.getElementById('f-linstallments').value) || 1;
+    const total = parseFloat(document.getElementById('f-lamount')?.value) || 0;
+    const count = parseInt(document.getElementById('f-linstallments')?.value) || 1;
     const val = count > 0 ? total / count : 0;
     const el = document.getElementById('f-loan-installment-value'); if (el) el.textContent = Domain.fmt(val);
   },
@@ -2241,9 +2505,15 @@ const App = {
     this.state.modal = { type: 'categories', editing: null };
     const sheet = document.getElementById('sheet');
     const backdrop = document.getElementById('sheet-backdrop');
-    document.getElementById('sheet-title').textContent = 'Gerenciar Categorias';
-    document.getElementById('sheet-content').innerHTML = this.buildCategoryManagerContent();
-    requestAnimationFrame(() => { sheet.classList.add('open'); backdrop.classList.add('open'); if (window.lucide) lucide.createIcons(); });
+    const sheetTitle = document.getElementById('sheet-title');
+    const sheetContent = document.getElementById('sheet-content');
+    if (sheetTitle) sheetTitle.textContent = 'Gerenciar Categorias';
+    if (sheetContent) sheetContent.innerHTML = this.buildCategoryManagerContent();
+    requestAnimationFrame(() => { 
+      if (sheet) sheet.classList.add('open'); 
+      if (backdrop) backdrop.classList.add('open'); 
+      if (window.lucide) lucide.createIcons(); 
+    });
   },
   
   buildCategoryManagerContent() {
@@ -2254,10 +2524,13 @@ const App = {
 
   addCategoryFromManager() {
     const input = document.getElementById('new-cat-input');
-    const val = input.value.trim();
+    const val = input?.value?.trim();
     if (!val) { this.showToast('Digite um nome.', 'error'); return; }
     if (this.state.categories.includes(val)) { this.showToast('Categoria já existe.', 'error'); return; }
-    this.state.categories.push(val); this.save(); document.getElementById('sheet-content').innerHTML = this.buildCategoryManagerContent(); this.render(); this.showToast('Categoria adicionada!', 'success');
+    this.state.categories.push(val); this.save(); 
+    const sheetContent = document.getElementById('sheet-content');
+    if (sheetContent) sheetContent.innerHTML = this.buildCategoryManagerContent(); 
+    this.render(); this.showToast('Categoria adicionada!', 'success');
   },
   async editCategory(oldName) {
     const newName = prompt('Renomear categoria "' + oldName + '":', oldName);
@@ -2266,7 +2539,10 @@ const App = {
     this.state.incomes.forEach(i => { if (i.category === oldName) i.category = trimmed; });
     this.state.expenses.forEach(e => { if (e.category === oldName) e.category = trimmed; });
     if (this.state.filterCategory === oldName) this.state.filterCategory = trimmed;
-    this.save(); document.getElementById('sheet-content').innerHTML = this.buildCategoryManagerContent(); this.render(); this.showToast('Renomeada!', 'success');
+    this.save(); 
+    const sheetContent = document.getElementById('sheet-content');
+    if (sheetContent) sheetContent.innerHTML = this.buildCategoryManagerContent(); 
+    this.render(); this.showToast('Renomeada!', 'success');
   },
   async deleteCategory(name) {
     const usageInc = this.state.incomes.filter(i => i.category === name).length;
@@ -2279,7 +2555,10 @@ const App = {
     this.state.incomes.forEach(i => { if (i.category === name) i.category = ''; });
     this.state.expenses.forEach(e => { if (e.category === name) e.category = ''; });
     if (this.state.filterCategory === name) this.state.filterCategory = '';
-    this.save(); document.getElementById('sheet-content').innerHTML = this.buildCategoryManagerContent(); this.render(); this.showToast('Excluída!', 'success');
+    this.save(); 
+    const sheetContent = document.getElementById('sheet-content');
+    if (sheetContent) sheetContent.innerHTML = this.buildCategoryManagerContent(); 
+    this.render(); this.showToast('Excluída!', 'success');
   },
 
   toggleInstallment(mode) {
@@ -2289,27 +2568,40 @@ const App = {
     if (mode === 'installment') this.updateEndDate();
   },
   updateEndDate() {
-    const start = document.getElementById('f-inst-start').value; const count = parseInt(document.getElementById('f-inst-count').value) || 0; const out = document.getElementById('f-end-date');
+    const start = document.getElementById('f-inst-start')?.value; const count = parseInt(document.getElementById('f-inst-count')?.value) || 0; const out = document.getElementById('f-end-date');
     if (out && start && count > 0) out.textContent = 'Data final prevista: ' + Domain.fmtDate(Domain.addMonths(start, count - 1));
   },
 
   submitTx() {
-    const desc = document.getElementById('f-desc').value.trim(); const amount = parseFloat(document.getElementById('f-amount').value); const category = document.getElementById('f-category').value; const date = document.getElementById('f-date').value; const isFixed = document.getElementById('f-fixed').checked;
-    if (!desc || !amount || amount <= 0 || !category || !date) { this.showToast('Preencha todos os campos.', 'error'); return; }
-    const { type, editing } = this.state.modal; const list = type === 'income' ? this.state.incomes : this.state.expenses;
-    if (editing) { const idx = list.findIndex(x => x.id === editing.id); if (idx > -1) list.splice(idx, 1); }
+    const desc = document.getElementById('f-desc')?.value?.trim() || ''; 
+    const amount = parseFloat(document.getElementById('f-amount')?.value) || 0; 
+    const type = this.state.modal.type;
+    const category = type === 'expense' ? (document.getElementById('f-category')?.value || '') : ''; 
+    const date = document.getElementById('f-date')?.value || ''; 
+    const isFixed = document.getElementById('f-fixed')?.checked || false;
+    if (!desc || !amount || amount <= 0 || !date) { this.showToast('Preencha todos os campos.', 'error'); return; }
+    if (type === 'expense' && !category) { this.showToast('Selecione uma categoria.', 'error'); return; }
+    
+    const list = type === 'income' ? this.state.incomes : this.state.expenses;
+    if (this.state.modal.editing) { 
+      const idx = list.findIndex(x => x.id === this.state.modal.editing.id); 
+      if (idx > -1) list.splice(idx, 1); 
+    }
     const isInstallment = type === 'expense' && document.getElementById('installment-fields')?.style.display === 'block';
     if (isInstallment) {
-      const count = parseInt(document.getElementById('f-inst-count').value) || 2; const start = document.getElementById('f-inst-start').value || date;
-      list.push({ id: editing ? editing.id : Domain.uid(), description: desc, totalAmount: amount, installmentValue: Math.round((amount / count) * 100) / 100, category, startDate: start, endDate: Domain.addMonths(start, count - 1), installmentsTotal: count, isFixed: false, installmentType: 'installment', createdAt: new Date().toISOString() });
+      const count = parseInt(document.getElementById('f-inst-count')?.value) || 2; const start = document.getElementById('f-inst-start')?.value || date;
+      list.push({ id: this.state.modal.editing ? this.state.modal.editing.id : Domain.uid(), description: desc, totalAmount: amount, installmentValue: Math.round((amount / count) * 100) / 100, category, startDate: start, endDate: Domain.addMonths(start, count - 1), installmentsTotal: count, isFixed: false, installmentType: 'installment', createdAt: new Date().toISOString() });
     } else {
-      list.push({ id: editing ? editing.id : Domain.uid(), description: desc, totalAmount: amount, installmentValue: amount, category, startDate: date, endDate: date, installmentsTotal: 1, isFixed, installmentType: 'cash', createdAt: new Date().toISOString() });
+      list.push({ id: this.state.modal.editing ? this.state.modal.editing.id : Domain.uid(), description: desc, totalAmount: amount, installmentValue: amount, category, startDate: date, endDate: date, installmentsTotal: 1, isFixed, installmentType: 'cash', createdAt: new Date().toISOString() });
     }
     this.save(); this.closeModal(); this.render(); this.showToast('Salvo!', 'success');
   },
 
   submitFinancing() {
-    const name = document.getElementById('f-name').value.trim(); const totalValue = parseFloat(document.getElementById('f-total').value) || 0; const installmentsTotal = parseInt(document.getElementById('f-installments').value) || 0; const startDate = document.getElementById('f-start').value;
+    const name = document.getElementById('f-name')?.value?.trim() || ''; 
+    const totalValue = parseFloat(document.getElementById('f-total')?.value) || 0; 
+    const installmentsTotal = parseInt(document.getElementById('f-installments')?.value) || 0; 
+    const startDate = document.getElementById('f-start')?.value || '';
     if (!name || !totalValue || totalValue <= 0 || !installmentsTotal || installmentsTotal <= 0 || !startDate) { this.showToast('Preencha corretamente.', 'error'); return; }
     const { editing } = this.state.modal;
     const item = { id: editing ? editing.id : Domain.uid(), name, totalValue, installmentsTotal, installmentValue: Math.round((totalValue / installmentsTotal) * 100) / 100, startDate, createdAt: editing ? editing.createdAt : new Date().toISOString() };
@@ -2318,7 +2610,10 @@ const App = {
   },
 
   submitLoan() {
-    const description = document.getElementById('f-ldesc').value.trim(); const totalAmount = parseFloat(document.getElementById('f-lamount').value) || 0; const installmentsTotal = parseInt(document.getElementById('f-linstallments').value) || 0; const startDate = document.getElementById('f-lstart').value;
+    const description = document.getElementById('f-ldesc')?.value?.trim() || ''; 
+    const totalAmount = parseFloat(document.getElementById('f-lamount')?.value) || 0; 
+    const installmentsTotal = parseInt(document.getElementById('f-linstallments')?.value) || 0; 
+    const startDate = document.getElementById('f-lstart')?.value || '';
     if (!description || !totalAmount || totalAmount <= 0 || !installmentsTotal || installmentsTotal <= 0 || !startDate) { this.showToast('Preencha corretamente.', 'error'); return; }
     const installmentValue = Math.round((totalAmount / installmentsTotal) * 100) / 100;
     const { editing } = this.state.modal;
@@ -2377,7 +2672,7 @@ const App = {
     let message = 'Selecione um JSON de backup para importar.';
     if (totalCurrent > 0) { message = `⚠️ ATENÇÃO!\n\nVocê já tem ${totalCurrent} registro(s). A importação irá SUBSTITUIR todos os dados atuais.`; if (!await this.showConfirm({ title: 'Importar backup?', message, type: 'warning', confirmText: 'Selecionar arquivo' })) return; if (await this.showConfirm({ title: 'Fazer backup antes?', message: 'Deseja exportar seus dados atuais antes?', confirmText: 'Sim' })) this.exportData(); }
     else { if (!await this.showConfirm({ title: 'Importar backup?', message, confirmText: 'Selecionar arquivo' })) return; }
-    const input = document.getElementById('import-file-input'); input.value = ''; input.click();
+    const input = document.getElementById('import-file-input'); if (input) { input.value = ''; input.click(); }
   },
 
   handleFileImport(event) {
